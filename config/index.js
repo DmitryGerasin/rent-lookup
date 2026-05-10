@@ -7,13 +7,18 @@ const PRODUCTION = requireEnv('NODE_ENV') === 'production'
 const DEVELOPMENT = requireEnv('NODE_ENV') === 'development'
 const HOSTNAME = requireEnv('HOSTNAME')
 const NODE_PORT = requireNonEmptyEnv('NODE_PORT')
+/** Bind address for HTTP (`127.0.0.1` locally; `0.0.0.0` in Docker so nginx can reach the app). */
+const HTTP_BIND_ADDRESS =
+   process.env.HTTP_BIND_ADDRESS !== undefined && String(process.env.HTTP_BIND_ADDRESS).length > 0
+      ? process.env.HTTP_BIND_ADDRESS
+      : `127.0.0.1`
 const PUBLIC_BASE_URL = HOSTNAME === `localhost`
    ? `http://localhost:${NODE_PORT}`
    : `https://${HOSTNAME}`
 const appHomePage = `/dashboard`
 const appName = `Loyers QC`
 const appNameLong = `Analyse des loyers — Québec`
-const USE_IP_WHITELIST = requireEnv('USE_IP_WHITELIST') === 'true'
+const USE_IP_WHITELIST = false
 const REGISTRATION_ENABLED = false
 const INVITATION_TOKEN_EXPIRY_HOURS = 48
 const BYPASS_AUTH_IN_DEV = true
@@ -91,6 +96,7 @@ module.exports = {
    EXPRESS_SESSION_SECRET,
    EXPRESS_SESSION_KEY,
    NODE_PORT,
+   HTTP_BIND_ADDRESS,
    LOG_REQUEST_EXEMPTIONS,
    POST_LOGIN_REDIRECT_EXEMPTIONS,
    USE_IP_WHITELIST,

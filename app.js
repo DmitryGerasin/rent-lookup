@@ -5,6 +5,7 @@ const {
    EXPRESS_SESSION_SECRET,
    EXPRESS_SESSION_KEY,
    NODE_PORT,
+   HTTP_BIND_ADDRESS,
    // sessionTimeout,
    REQUEST_BODY_LIMIT,
 }                       = require(`./config`)
@@ -144,7 +145,7 @@ app.use(require(`./routes/index`))
 // 14. Global error handling (must be after routes and before server start)
 app.use(globalErrorHandler)
 
-// 15. Start server (only listens to 127.0.0.1 (nginx) to prevent direct access via port 8080)
-http.createServer(app).listen(NODE_PORT, `127.0.0.1`, () => { 
-   console.log(`${timeStamp()} HTTP Server running on port ${NODE_PORT}`)
+// 15. Start server (`HTTP_BIND_ADDRESS`: 127.0.0.1 locally; 0.0.0.0 when nginx is another container)
+http.createServer(app).listen(NODE_PORT, HTTP_BIND_ADDRESS, () => {
+   console.log(`${timeStamp()} HTTP Server listening on ${HTTP_BIND_ADDRESS}:${NODE_PORT}`)
 })

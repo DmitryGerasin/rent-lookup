@@ -8,6 +8,8 @@
   "main": "app.js",
   "scripts": {
     "start": "nodemon app.js",
+    "start:prod": "node app.js",
+    "build:assets": "sass --error-css private/scss:public/css --no-source-map --style=compressed && browserify private/js/dashboard/index.js -o public/js/dashboard.bundle.js && browserify private/js/login/index.js -o public/js/login.bundle.js && browserify private/js/error.js -o public/js/error.bundle.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "vendor:sync": "node scripts/sync-vendor-assets.js",
     "postinstall": "npm run vendor:sync",

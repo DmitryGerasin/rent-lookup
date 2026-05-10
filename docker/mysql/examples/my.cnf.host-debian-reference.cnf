@@ -1,0 +1,22 @@
+#
+# Reference copy of a Debian-style full my.cnf (not used in Docker as-is).
+# In containers, use ../conf.d/realestate.cnf only — do not use !includedir
+# snippets inside conf.d drop-ins.
+#
+# NOTE: bind-address = 127.0.0.1 (below) blocks remote TCP clients and would
+# prevent the app container from connecting. The Docker drop-in sets 0.0.0.0.
+
+# !includedir /etc/mysql/conf.d/
+# !includedir /etc/mysql/mysql.conf.d/
+
+[mysqld]
+log_error=/var/log/mysql/error.log
+general_log=ON
+general_log_file=/var/log/mysql/general.log
+slow_query_log=ON
+slow_query_log_file=/var/log/mysql/slow_query.log
+user            = mysql
+pid-file        = /var/run/mysqld/mysqld.pid
+socket          = /var/run/mysqld/mysqld.sock
+port            = 3306
+bind-address    = 127.0.0.1

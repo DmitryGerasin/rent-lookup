@@ -1,0 +1,14 @@
+# Drop-in for the official mysql image — mounted as a single file under
+# /etc/mysql/conf.d/ so we do not replace the image’s other *.cnf files.
+
+[mysqld]
+# Required for Docker: the Node app connects over TCP from another container.
+bind-address = 0.0.0.0
+
+# Logging (paths exist in mysql:8.x official image)
+log_error = /var/log/mysql/error.log
+slow_query_log = 1
+slow_query_log_file = /var/log/mysql/slow-query.log
+
+# General query log is noisy; enable only when debugging.
+general_log = 0
