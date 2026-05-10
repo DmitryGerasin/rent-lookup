@@ -3,48 +3,62 @@ const {
    requireNonEmptyEnv,
 }                       = require(`../utils/validateEnv`)
 
+// Environment
 const PRODUCTION = requireEnv('NODE_ENV') === 'production'
 const DEVELOPMENT = requireEnv('NODE_ENV') === 'development'
+
+// Hostname and port
 const HOSTNAME = requireEnv('HOSTNAME')
 const NODE_PORT = requireNonEmptyEnv('NODE_PORT')
+const PUBLIC_BASE_URL = HOSTNAME === `localhost`
+   ? `http://localhost:${NODE_PORT}`
+   : `https://${HOSTNAME}`
+
 /** Bind address for HTTP (`127.0.0.1` locally; `0.0.0.0` in Docker so nginx can reach the app). */
 const HTTP_BIND_ADDRESS =
    process.env.HTTP_BIND_ADDRESS !== undefined && String(process.env.HTTP_BIND_ADDRESS).length > 0
       ? process.env.HTTP_BIND_ADDRESS
       : `127.0.0.1`
-const PUBLIC_BASE_URL = HOSTNAME === `localhost`
-   ? `http://localhost:${NODE_PORT}`
-   : `https://${HOSTNAME}`
-const appHomePage = `/dashboard`
-const appName = `Loyers QC`
-const appNameLong = `Analyse des loyers — Québec`
-const USE_IP_WHITELIST = false
-const REGISTRATION_ENABLED = false
-const INVITATION_TOKEN_EXPIRY_HOURS = 48
-const BYPASS_AUTH_IN_DEV = true
-const BYPASS_RBAC_IN_DEV = true
-const USE_LOG_REQUEST_IN_DEVELOPMENT = false
-const EXPRESS_SESSION_SECRET = requireNonEmptyEnv('EXPRESS_SESSION_SECRET')
-const EXPRESS_SESSION_KEY = requireNonEmptyEnv('EXPRESS_SESSION_KEY')
-// const sessionTimeout = requireNonEmptyEnv('sessionTimeout')
-const REQUEST_BODY_LIMIT = '50kb'
-const GEOCODIO_API_KEY = requireNonEmptyEnv('GEOCODIO_API_KEY')
-const GEOCODIO_BASE = 'https://api.geocod.io/v1.12'
-const CSRF_SECRET = requireNonEmptyEnv('CSRF_SECRET')
-
-const VALID_ROLES = [
-   `admin`,
-   `user`,
-]
-
-const RECAPTCHA_SITE_KEY = requireNonEmptyEnv('RECAPTCHA_SITE_KEY')
-const RECAPTCHA_SECRET_KEY = requireNonEmptyEnv('RECAPTCHA_SECRET_KEY')
 
 // Mysql
 const MYSQL_HOST = requireNonEmptyEnv('MYSQL_HOST')
 const MYSQL_USER = requireNonEmptyEnv('MYSQL_USER')
 const MYSQL_PASSWORD = requireNonEmptyEnv('MYSQL_PASSWORD')
 const MYSQL_DATABASE = requireNonEmptyEnv('MYSQL_DATABASE')
+
+// Security
+const USE_IP_WHITELIST = false
+const REGISTRATION_ENABLED = false
+const INVITATION_TOKEN_EXPIRY_HOURS = 48
+const BYPASS_AUTH_IN_DEV = true
+const BYPASS_RBAC_IN_DEV = true
+const USE_LOG_REQUEST_IN_DEVELOPMENT = false
+const REQUEST_BODY_LIMIT = '50kb'
+
+// Express
+const EXPRESS_SESSION_SECRET = requireNonEmptyEnv('EXPRESS_SESSION_SECRET')
+const EXPRESS_SESSION_KEY = requireNonEmptyEnv('EXPRESS_SESSION_KEY')
+// const sessionTimeout = requireNonEmptyEnv('sessionTimeout')
+
+// Geocodio
+const GEOCODIO_API_KEY = requireNonEmptyEnv('GEOCODIO_API_KEY')
+const GEOCODIO_BASE = 'https://api.geocod.io/v1.12'
+
+// CSRF
+const CSRF_SECRET = requireNonEmptyEnv('CSRF_SECRET')
+
+// Recaptcha
+const RECAPTCHA_SITE_KEY = requireNonEmptyEnv('RECAPTCHA_SITE_KEY')
+const RECAPTCHA_SECRET_KEY = requireNonEmptyEnv('RECAPTCHA_SECRET_KEY')
+
+// App
+const appHomePage = `/dashboard`
+const appName = `Loyers QC`
+const appNameLong = `Analyse des loyers — Québec`
+const VALID_ROLES = [
+   `admin`,
+   `user`,
+]
 
 /** `express.static` max-age (e.g. production cache). */
 const staticFilesMaxAge = PRODUCTION ? `7d` : 0

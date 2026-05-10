@@ -17,6 +17,7 @@ This folder holds configuration that is bind-mounted into the **MySQL**, **nginx
 | `nginx/nginx-errors/`         | `/var/www/nginx-errors/` (custom 50x pages)                      |
 | `certbot/www/`                | `/var/www/certbot/` (Let's Encrypt HTTP-01 challenge webroot)    |
 | `env.example`                 | Copy to repo root as `.env` (reference only, not mounted)        |
+| `../scripts/firewall/*.sh`    | Optional production host firewall (UFW + `DOCKER-USER`); see below |
 
 
 Nginx uses the **Alpine** official image (`nginx:1.27-alpine`): `user nginx`, no `headers-more` module, and no Debian `modules-enabled` tree. The main config in this repo is written for that image.
@@ -31,6 +32,27 @@ Nginx uses the **Alpine** official image (`nginx:1.27-alpine`): `user nginx`, no
 - DNS **A** (and **AAAA** if you use IPv6) records for your public hostname(s) pointing at this server.
 - Ports **80** and **443** open to the internet (for Let’s Encrypt HTTP-01 and HTTPS).
 
+### Step 0 — Host firewall (production, Ubuntu/Debian with UFW)
+
+Run **before** you rely on this machine being exposed, and **from a session you know keeps SSH working** (console or correct allowlist). Wrong SSH rules can lock you out.
+
+From the repo root:
+
+```bash
+chmod +x scripts/firewall/ufw-docker-production.sh scripts/firewall/iptables-docker-user-web-only.sh
+```
+
+**UFW** — deny inbound by default, allow SSH only from your admin IPs.
+
+   Edit `DEFAULT_SSH_IPS` in `scripts/firewall/ufw-docker-production.sh`, or pass addresses in the environment (preserved with `sudo -E`):
+
+   ```bash
+   export SSH_ALLOW_IPS="YOUR.IP.V4.HERE YOUR.OTHER.IP.HERE"
+   sudo -E ./scripts/firewall/ufw-docker-production.sh
+   ```
+
+   The script uses `set -euo pipefail`: any failing `ufw` command stops the rest.
+
 ### Step 1 — Clone and environment
 
 ```bash
@@ -39,7 +61,10 @@ cd RealEstate
 cp docker/env.example .env
 ```
 
-Edit `.env`: set strong secrets (`MYSQL_ROOT_PASSWORD`, `MYSQL_PASSWORD`, session/CSRF keys, API keys, etc.).  
+Edit `.env`: set strong secrets (`MYSQL_ROOT_PASSWORD`, `MYSQL_PASSWORD`, session/CSRF keys, API keys, etc.). 
+```bash
+openssl rand -hex 16 | pbcopy
+```
 Set **`HOSTNAME`** to the public FQDN (no `https://`; used by the Node app for `PUBLIC_BASE_URL` and by nginx for `server_name` and `/etc/letsencrypt/live/$HOSTNAME/`).  
 Set **`NODE_PORT`** to the port the app listens on inside the stack (default `3000`); nginx’s upstream uses the same value.  
 Ensure **`NODE_ENV=production`** for a public deployment.
@@ -85,6 +110,62 @@ Certbot’s `**options-ssl-nginx.conf**` and `**ssl-dhparams.pem**` are normally
 
 ### Step 4 — Build and start the stack
 
+#### 4.1 Installing docker
+Update your existing list of packages:
+```bash
+sudo apt update
+```
+
+Install a few prerequisite packages which let `apt` use packages over HTTPS:
+```bash
+sudo apt install ca-certificates curl gnupg
+```
+
+Add the GPG key for the official Docker repository to your system:
+```bash
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+```
+
+Add the Docker repository to APT sources:
+```bash
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+```
+
+Update your existing list of packages again for the addition to be recognized:
+```bash
+sudo apt update
+```
+
+Make sure you are about to install from the Docker repo instead of the default Ubuntu repo:
+```bash
+apt-cache policy docker-ce
+
+# You’ll see output like this, although the version number for Docker may be different:
+
+docker-ce:
+  Installed: (none)
+  Candidate: 5:20.10.14~3-0~ubuntu-jammy
+  Version table:
+     5:20.10.14~3-0~ubuntu-jammy 500
+        500 https://download.docker.com/linux/ubuntu jammy/stable amd64 Packages
+     5:20.10.13~3-0~ubuntu-jammy 500
+        500 https://download.docker.com/linux/ubuntu jammy/stable amd64 Packages
+```
+
+Install docker:
+```bash
+sudo apt install docker-ce
+```
+
+To avoid typing sudo whenever you run the docker command, add your username to the docker group:
+```bash
+sudo usermod -aG docker ${USER}
+su - ${USER}
+```
+
+#### 4.2. Build
 From the **repository root** (where `docker-compose.yml` lives):
 
 ```bash
@@ -99,6 +180,19 @@ docker compose ps
 docker compose logs -f app
 docker compose logs -f nginx
 ```
+
+#### 4.3. iptables
+**Docker `DOCKER-USER`** — after the **Docker daemon** is running and has created the **`DOCKER-USER`** iptables chain (normally on daemon start; `docker compose up -d` is enough to confirm). The script **exits with an error** if `docker info` fails or the chain is missing, so it will not silently add rules before Docker has initialized networking.
+
+   It restricts what reaches published container ports: only new inbound TCP **80** and **443** on the default-route interface are allowed through to Docker; other inbound traffic to containers from that interface is dropped.
+
+   ```bash
+   sudo ./scripts/firewall/iptables-docker-user-web-only.sh
+   ```
+
+   Re-run this script after reboot if your setup does not persist `iptables` rules (consider `iptables-persistent`, `netfilter-persistent`, or a systemd oneshot).
+
+If you use **IPv6** for public web, add matching rules (UFW IPv6 and/or `ip6tables` on `DOCKER-USER`) yourself; the iptables script is **IPv4-only**.
 
 ### Step 5 — MySQL initialization (first run only)
 

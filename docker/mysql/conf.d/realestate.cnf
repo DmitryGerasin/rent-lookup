@@ -5,6 +5,10 @@
 # Required for Docker: the Node app connects over TCP from another container.
 bind-address = 0.0.0.0
 
+# Small VPS: default InnoDB pool (~128MB+) can OOM during first init; lower if mysqld is still Killed.
+innodb_buffer_pool_size = 128M
+performance_schema = OFF
+
 # Logging (paths exist in mysql:8.x official image)
 log_error = /var/log/mysql/error.log
 slow_query_log = 1

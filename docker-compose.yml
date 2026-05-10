@@ -7,10 +7,12 @@
 services:
   mysql:
     image: mysql:8.4
+    container_name: real-estate-mysql
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: realestate
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-realestate}
+      MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - mysql_data:/var/lib/mysql
@@ -20,14 +22,18 @@ services:
     networks:
       - internal
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1"]
+      # test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${MYSQL_ROOT_PASSWORD}"]
+      # Password from container env (avoid compose-time interpolation issues with special chars)
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD || exit 1"]
       interval: 5s
       timeout: 5s
-      retries: 10
-      start_period: 30s
+      retries: 15
+      # First-time datadir init can be slow on small VPS; avoids marking unhealthy too early
+      start_period: 180s
 
   app:
     build: .
+    container_name: real-estate-app
     restart: unless-stopped
     env_file:
       - .env
@@ -36,9 +42,9 @@ services:
       HTTP_BIND_ADDRESS: "0.0.0.0"
       NODE_PORT: ${NODE_PORT}
       MYSQL_HOST: mysql
-      MYSQL_USER: app
+      MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_DATABASE: realestate
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-realestate}
     depends_on:
       mysql:
         condition: service_healthy
@@ -47,6 +53,7 @@ services:
 
   nginx:
     image: nginx:1.27-alpine
+    container_name: real-estate-nginx
     restart: unless-stopped
     environment:
       # Render docker/nginx/vhost/realestate.in → conf.d (do not mount full .env here).

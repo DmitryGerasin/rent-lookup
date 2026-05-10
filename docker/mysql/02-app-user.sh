@@ -1,17 +1,19 @@
 #!/bin/bash
 set -euo pipefail
 
-# Creates `app` and applies grants from config/mysql/permissions.sql logic.
-# MYSQL_PASSWORD is supplied by docker-compose (same value the Node app uses).
+# Table-level grants for the app DB user (must match MYSQL_USER / MYSQL_PASSWORD in compose).
+# The official image may already have created MYSQL_USER; GRANT still applies least-privilege on _User.
+
+APP_USER="${MYSQL_USER:-app}"
 
 mysql -uroot -p"${MYSQL_ROOT_PASSWORD}" <<-EOSQL
-USE realestate;
+USE ${MYSQL_DATABASE};
 
-CREATE USER IF NOT EXISTS 'app'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
-CREATE USER IF NOT EXISTS 'app'@'localhost' IDENTIFIED BY '${MYSQL_PASSWORD}';
+CREATE USER IF NOT EXISTS '${APP_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
+CREATE USER IF NOT EXISTS '${APP_USER}'@'localhost' IDENTIFIED BY '${MYSQL_PASSWORD}';
 
-GRANT SELECT, INSERT, UPDATE ON realestate._User TO 'app'@'%';
-GRANT SELECT, INSERT, UPDATE ON realestate._User TO 'app'@'localhost';
+GRANT SELECT, INSERT, UPDATE ON ${MYSQL_DATABASE}._User TO '${APP_USER}'@'%';
+GRANT SELECT, INSERT, UPDATE ON ${MYSQL_DATABASE}._User TO '${APP_USER}'@'localhost';
 
 FLUSH PRIVILEGES;
 EOSQL
