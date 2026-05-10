@@ -1,0 +1,7 @@
+// jQuery UI sets list-style-image to a transparent 1×1 GIF (data: URL) on menu items for an
+// IE10 submenu bullet workaround (#8844). img-src CSP blocks data: images, so we drop the
+// hack and use none to avoid console / report noise on modern browsers.
+
+.ui-menu .ui-menu-item {
+   list-style-image: none;
+}

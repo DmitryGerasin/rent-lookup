@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <%# Required meta tags %> 
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+   <%- include('./partials/csrf.ejs') %>
+
+   <%# Icon %> 
+   <link rel="shortcut icon" href="/favicon.ico?cache=<%= process.env.CACHE_BUSTER %>" type="image/x-icon">
+   
+   <%# JS %> 
+   <script defer src="/js/vendors/jquery.min.js"></script>
+   <script defer src="/js/error.bundle.js"></script>
+
+   <%# CSS %> 
+   <link rel="stylesheet" href="/css/error.min.css?cache=<%= process.env.CACHE_BUSTER %>">
+
+   <title><%= pageTitle %></title>
+</head>
+
+<body>
+
+   <div class="container">
+      <h1><%= errorTitle %></h1>
+      <h2 id="error-message" data-content="<%= errorMessage %>"></h2>
+      <a href="/">Retour à la page principale</a>
+   </div>
+
+</body>
+
+
+<%# 400 Bad Request
+   The server cannot or will not process the request due to an apparent client error 
+   (e.g., malformed request syntax, size too large, invalid request message framing, 
+   or deceptive request routing). 
+%>
+
+<%# 401 Unauthorized (RFC 7235)
+   Similar to 403 Forbidden, but specifically for use when authentication is required 
+   and has failed or has not yet been provided. The response must include a 
+   WWW-Authenticate header field containing a challenge applicable to the requested 
+   resource. See Basic access authentication and Digest access authentication.[32] 401 
+   semantically means "unauthorised",[33] the user does not have valid authentication 
+   credentials for the target resource.
+   Note: Some sites incorrectly issue HTTP 401 when an IP address is banned from the 
+   website (usually the website domain) and that specific address is refused permission 
+   to access a website. 
+%>
+
+<%# 403 Forbidden
+   The request contained valid data and was understood by the server, but the server 
+   is refusing action. This may be due to the user not having the necessary permissions 
+   for a resource or needing an account of some sort, or attempting a prohibited action 
+   (e.g. creating a duplicate record where only one is allowed). This code is also 
+   typically used if the request provided authentication by answering the WWW-Authenticate 
+   header field challenge, but the server did not accept that authentication. The 
+   request should not be repeated. 
+%>
+
+<%# 500 Internal Server Error
+   A generic error message, given when an unexpected condition was encountered and 
+   no more specific message is suitable.
+%>

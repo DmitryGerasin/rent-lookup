@@ -1,0 +1,76 @@
+
+//
+// Color system from sketchy
+//
+
+$white:    #fff;
+$gray-100: #f8f9fa;
+$gray-200: #f7f7f9;
+$gray-300: #dee2e6;
+$gray-400: #ccc;
+$gray-500: #aaa;
+$gray-600: #868e96;
+$gray-700: #555;
+$gray-800: #333;
+$gray-900: #212529;
+$black:    #000;
+
+$blue:    #007bff;
+$indigo:  #6610f2;
+$purple:  #6f42c1;
+$pink:    #e83e8c;
+$red:     #dc3545;
+$orange:  #fd7e14;
+$yellow:  #ffc107;
+$green:   #28a745;
+$teal:    #20c997;
+$cyan:    #17a2b8;
+
+$primary:       $gray-800;
+$secondary:     $gray-700;
+$success:       $green;
+$info:          $cyan;
+$warning:       $yellow;
+$danger:        $red;
+$light:         $white;
+$dark:          $gray-700;
+
+$min-contrast-ratio:   1.6;
+
+$table-striped-bg-factor: 0.13; // 0.05
+// $table-active-bg-factor: 0.1!default;
+$table-hover-bg-factor: 0.1; //0.075
+
+// Navs
+$nav-link-padding-y: 0.5rem;               // .5rem !default; from bootstrap
+$nav-link-padding-x: 1.0rem;               // 1rem !default; from bootstrap
+
+// Forms
+$input-border-color: $gray-700;            // I want forms to stand out more; default was $gray-400
+$form-floating-label-opacity: 1;           // In order to have labels become solid black when data is entered
+
+@import '../vendors/bootswatch/flatly/_variables.scss';
+@import '../../../node_modules/bootstrap/scss/_functions.scss'; // Used to be absolute path
+
+
+
+$link-color: $primary;
+
+// Bootstrap icon backgrounds: self-hosted SVGs (CSP). How to refresh after theme changes:
+// private/scss/vendors-extensions/README-bootstrap-svg-csp.md — modal/toast close: _bootswatch.scss
+$form-check-input-checked-bg-image:         url("/svg/bootstrap/form-check-input-checked.svg");
+$form-check-radio-checked-bg-image:         url("/svg/bootstrap/form-check-radio-checked.svg");
+$form-check-input-indeterminate-bg-image:   url("/svg/bootstrap/form-check-input-indeterminate.svg");
+$form-switch-bg-image:                      url("/svg/bootstrap/form-switch.svg");
+$form-switch-focus-bg-image:                url("/svg/bootstrap/form-switch-focus.svg");
+$form-switch-checked-bg-image:              url("/svg/bootstrap/form-switch-checked.svg");
+$form-select-indicator:                     url("/svg/bootstrap/form-select-indicator.svg");
+$form-feedback-icon-valid:                  url("/svg/bootstrap/form-feedback-icon-valid.svg");
+$form-feedback-icon-invalid:                url("/svg/bootstrap/form-feedback-icon-invalid.svg");
+$navbar-light-toggler-icon-bg:              url("/svg/bootstrap/navbar-light-toggler-icon.svg");
+$navbar-dark-toggler-icon-bg:               url("/svg/bootstrap/navbar-dark-toggler-icon.svg");
+$accordion-button-icon:                     url("/svg/bootstrap/accordion-button-icon.svg");
+$accordion-button-active-icon:              url("/svg/bootstrap/accordion-button-active-icon.svg");
+$carousel-control-prev-icon-bg:             url("/svg/bootstrap/carousel-control-prev-icon.svg");
+$carousel-control-next-icon-bg:             url("/svg/bootstrap/carousel-control-next-icon.svg");
+$btn-close-bg:                              url("/svg/bootstrap/btn-close.svg"); // If this one is updated, see also the bootswatch overrides in private/scss/vendors-extensions/_bootswatch.scss

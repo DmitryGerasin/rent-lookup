@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <%# Required meta tags %> 
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+   <%- include('../partials/csrf.ejs') %>
+
+   <%# Icon %> 
+   <link rel="shortcut icon" href="/favicon.ico?cache=<%= process.env.CACHE_BUSTER %>" type="image/x-icon">
+   
+   <%# JS %> 
+   <script defer src="/js/vendors/jquery.min.js?cache=<%= process.env.CACHE_BUSTER %>"></script>
+   <script defer src="/js/vendors/bootstrap.bundle.min.js?cache=<%= process.env.CACHE_BUSTER %>"></script>
+   <script defer src="/js/vendors/chart.umd.min.js?cache=<%= process.env.CACHE_BUSTER %>"></script>
+   <script defer src="/js/dashboard.bundle.js?cache=<%= process.env.CACHE_BUSTER %>"></script>
+
+   <%# CSS %> 
+   <link rel="stylesheet" href="/css/dashboard.min.css?cache=<%= process.env.CACHE_BUSTER %>">
+
+   <title><%= pageTitle %></title>
+</head>
+
+<body class="bg-light">
+   <%- include('../partials/navbarApp.ejs', { appName, firstName, lastName }) %>
+
+   <div class="container py-2">
+      <%- include('../partials/messages.ejs') %>
+   </div>
+
+   <main class="container pb-5 px-3">
+      <div class="row justify-content-center">
+         <div class="col-12 col-xl-11">
+            <h1 class="h3 mb-3">Rent analysis (Quebec rental registry)</h1>
+            <p class="text-muted small mb-4">
+               Enter a Quebec address. We geocode it, fetch registry listings around that point,
+               then show average monthly rent by number of closed bedrooms.
+            </p>
+
+            <form id="rental-analysis-form" class="card shadow-sm mb-4">
+               <div class="card-body">
+                  <div class="row g-3">
+                     <div class="col-12">
+                        <label for="street" class="form-label">Street address</label>
+                        <input type="text" class="form-control" id="street" name="street" autocomplete="street-address" required>
+                     </div>
+                     <div class="col-12 col-md-6">
+                        <label for="city" class="form-label">City</label>
+                        <input type="text" class="form-control" id="city" name="city" autocomplete="address-level2" required>
+                     </div>
+                     <div class="col-12 col-md-6">
+                        <label for="postalCode" class="form-label">Postal code</label>
+                        <input type="text" class="form-control" id="postalCode" name="postalCode" autocomplete="postal-code">
+                     </div>
+                     <div class="col-12 col-md-6">
+                        <label for="scale" class="form-label">Area scale</label>
+                        <input type="number" class="form-control" id="scale" name="scale" min="<%= registryBboxScaleMin %>" max="<%= registryBboxScaleMax %>" step="<%= registryBboxScaleStep %>" value="<%= registryBboxScaleDefault %>" required>
+                        <div class="form-text"><%= registryBboxScaleMin %>–<%= registryBboxScaleMax %> — size of the bounding box around the geocoded point sent to the registry.</div>
+                     </div>
+                  </div>
+                  <div class="mt-4">
+                     <button type="button" id="analyzeSubmit" class="btn btn-primary btn-lg w-100 col-12 col-md-4">
+                        Analyze
+                     </button>
+                  </div>
+               </div>
+            </form>
+
+            <section id="resultsSection" class="d-none">
+               <h2 class="h5">Results</h2>
+               <p id="geocodeLine" class="small text-muted mb-3"></p>
+               <div id="warningsBox" class="alert alert-warning d-none small" role="alert"></div>
+               <div id="scatterChartSection" class="mb-4 d-none">
+                  <h3 class="h6">Rent buckets (year × $<%= rentalAnalysis.RENT_CHART_DOLLAR_BUCKET_SIZE %> bands)</h3>
+                  <p id="scatterFiltersLine" class="small text-muted mb-2"></p>
+                  <p class="small text-muted mb-3">
+                     Colour = closed bedrooms (rainbow: red = 0, orange = 1, … violet = 6, purple = 7+).
+                     Dot size = number of listings in that year, bedroom colour, and rent band.
+                     Left: no unit number (plex, townhouses). Right: unit number present (condos).
+                  </p>
+                  <div class="row g-3">
+                     <div class="col-12 col-lg-6">
+                        <h4 class="small fw-semibold mb-2">Plex / townhouses <span class="text-muted fw-normal">(no unit)</span></h4>
+                        <div class="position-relative scatter-chart-wrap">
+                           <canvas id="rentScatterChartPlex" aria-label="Rent bucket bubble chart plex and townhouses"></canvas>
+                        </div>
+                        <div id="rentBedroomToggleWrapPlex" class="rent-bedroom-toggle-wrap mt-2 mb-1 d-none">
+                           <div class="small text-muted mb-1">Closed bedrooms — hover to show one series; click to pin (click again for all).</div>
+                           <div class="rent-bedroom-toggle btn-group btn-group-sm flex-wrap" role="group" aria-label="Filter plex chart by bedroom count" data-segment="plex">
+                              <% for (let b = 0; b < rentalAnalysis.CHART_BEDROOM_BUCKET_COUNT; b++) { %>
+                              <button type="button" class="btn btn-outline-secondary rent-bedroom-btn" data-bedroom="<%= b %>"><%= b === rentalAnalysis.CHART_BEDROOM_BUCKET_COUNT - 1 ? '7+' : b %></button>
+                              <% } %>
+                           </div>
+                        </div>
+                        <p id="scatterChartEmptyPlex" class="small text-muted d-none mb-0 mt-2">No points for this group.</p>
+
+                        <h5 class="small fw-semibold mt-3 mb-2">Average rent — plex / townhouses</h5>
+                        <div class="table-responsive">
+                           <table class="table table-striped table-bordered align-middle rent-table rent-table--compact" id="plexAveragesTable">
+                              <thead class="table-light" id="plexTableHead"></thead>
+                              <tbody id="plexTableBody"></tbody>
+                           </table>
+                        </div>
+                     </div>
+                     <div class="col-12 col-lg-6">
+                        <h4 class="small fw-semibold mb-2">Condos <span class="text-muted fw-normal">(with unit number)</span></h4>
+                        <div class="position-relative scatter-chart-wrap">
+                           <canvas id="rentScatterChartCondo" aria-label="Rent bucket bubble chart condos"></canvas>
+                        </div>
+                        <div id="rentBedroomToggleWrapCondo" class="rent-bedroom-toggle-wrap mt-2 mb-1 d-none">
+                           <div class="small text-muted mb-1">Closed bedrooms — hover to show one series; click to pin (click again for all).</div>
+                           <div class="rent-bedroom-toggle btn-group btn-group-sm flex-wrap" role="group" aria-label="Filter condo chart by bedroom count" data-segment="condo">
+                              <% for (let b = 0; b < rentalAnalysis.CHART_BEDROOM_BUCKET_COUNT; b++) { %>
+                              <button type="button" class="btn btn-outline-secondary rent-bedroom-btn" data-bedroom="<%= b %>"><%= b === rentalAnalysis.CHART_BEDROOM_BUCKET_COUNT - 1 ? '7+' : b %></button>
+                              <% } %>
+                           </div>
+                        </div>
+                        <p id="scatterChartEmptyCondo" class="small text-muted d-none mb-0 mt-2">No points for this group.</p>
+
+                        <h5 class="small fw-semibold mt-3 mb-2">Average rent — condos</h5>
+                        <div class="table-responsive">
+                           <table class="table table-striped table-bordered align-middle rent-table rent-table--compact" id="condoAveragesTable">
+                              <thead class="table-light" id="condoTableHead"></thead>
+                              <tbody id="condoTableBody"></tbody>
+                           </table>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+
+               <h3 class="h6 mt-4 mb-2">All listings</h3>
+               <div class="table-responsive">
+                  <table class="table table-striped table-bordered align-middle rent-table rent-table--wide" id="averagesTable">
+                     <thead class="table-light" id="averagesTableHead"></thead>
+                     <tbody id="averagesTableBody"></tbody>
+                  </table>
+               </div>
+               <p id="totalsLine" class="small text-muted mt-2"></p>
+            </section>
+         </div>
+      </div>
+   </main>
+</body>
+
+</html>

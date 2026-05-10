@@ -1,0 +1,104 @@
+
+button, .button {
+   border-radius: 10px;
+   border: none;
+   box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+   cursor: pointer;
+   font-size: 16px;
+   font-weight: 700;
+   padding: 15px 60px;
+   margin: 3px;
+   
+   // background-color: #fff;
+   // color: #333;
+
+   &:hover {
+      opacity: 0.9;
+      transform: scale(0.95);
+   }
+   
+   & svg {
+      vertical-align: text-top;
+      margin-top: -0.2rem;
+      margin-bottom: -0.3rem;
+      width: 28px;
+      height: 28px;
+   }
+   &.size30x30 {
+      height: 30px;
+      width: 30px;
+
+      & svg {
+         margin-top: 0;
+         margin-bottom: 0;
+      }
+   }
+   &.size25x25 {
+      transform: scale(0.833333333);
+      &:hover{
+         transform: scale(0.95 * 0.833333333);
+      }
+   }
+   &.btn-sm > svg {
+      transform: scale(0.833333333);
+   }
+
+   main.file &, 
+   aside#file-log &, 
+   aside#time-activities &,
+   main.person &, 
+   aside#person-log &,
+   aside#lawyer-log &,
+   div.modal & {
+      border-radius: 5px;
+
+      padding: 3px 20px;
+      margin: 1px;
+
+      & svg {
+         fill: white;
+      }
+   }
+
+   ul.nav & {
+      margin: auto;
+   }
+}
+
+img[type="button"] {
+   height: 30px;
+   width: 30px;
+}
+
+.four-btn-group {
+   $border-radius: 5px;
+   $border-width: 0.5px;
+
+   box-shadow: 0 0 10px rgb(0 0 0 / 15%);
+   border-radius: $border-radius;
+
+   & .btn {
+      box-shadow: none;
+   }
+
+   & .btn:nth-child(1) {
+      border-radius: $border-radius 0 0 0;
+      border-right-width: $border-width;
+      border-bottom-width: $border-width;
+   }
+   & .btn:nth-child(2) {
+      border-radius: 0 $border-radius 0 0;
+      border-bottom-width: $border-width;
+      border-left-width: $border-width;
+   }
+   & .btn:nth-child(3) {
+      border-radius: 0 0 0 $border-radius;
+      border-right-width: $border-width;
+      border-top-width: $border-width;
+   }
+   & .btn:nth-child(4) {
+      border-radius: 0 0 $border-radius 0;
+      border-top-width: $border-width;
+      border-left-width: $border-width;
+   }
+}

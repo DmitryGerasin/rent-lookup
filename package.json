@@ -1,0 +1,50 @@
+{
+  "name": "realestate",
+  "version": "0.1.0",
+  "description": "",
+  "license": "ISC",
+  "author": "Dmitry Gerasin",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "vendor:sync": "node scripts/sync-vendor-assets.js",
+    "postinstall": "npm run vendor:sync",
+    "dev": "concurrently --kill-others \"npm:watchJs-*\" \"npm:sass\" \"npm:start\"",
+    "sass": "sass --error-css --watch private/scss:public/css --no-source-map --style=compressed",
+    "watch-all": "concurrently --kill-others \"npm:watchJs-*\" \"npm:sass\"",
+    "watchJs": "concurrently --kill-others \"npm:watchJs-*\"",
+    "watchJs-dashboard": "watchify private/js/dashboard/index -v -o               public/js/dashboard.bundle.js",
+    "watchJs-error": "watchify private/js/error -v -o                             public/js/error.bundle.js",
+    "watchJs-login": "watchify private/js/login -v -o                             public/js/login.bundle.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "bootstrap": "^5.3.8",
+    "chart.js": "^4.5.1",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.7",
+    "csrf-csrf": "^4.0.3",
+    "dotenv": "^17.4.2",
+    "ejs": "^3.1.10",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.5.1",
+    "express-session": "^1.19.0",
+    "geocodio-library-node": "^1.15.0",
+    "helmet": "^8.1.0",
+    "jquery": "^4.0.0",
+    "luxon": "^3.7.2",
+    "mysql2": "^3.22.3",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0",
+    "password-validator": "^5.3.0",
+    "querystring": "^0.2.1"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "nodemon": "^3.1.14",
+    "sass": "^1.99.0",
+    "watchify": "^4.0.0"
+  }
+}

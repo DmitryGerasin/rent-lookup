@@ -1,0 +1,26 @@
+// 1. BOOTSTRAP & BOOTSWATCH
+@use './vendors/bootswatch/sketchy/variables' as v;
+@use '../../node_modules/bootstrap/scss/functions' as f;
+@use './vendors/bootstrap';
+
+// 2. CUSTOM STYLES
+@use './base/resets';
+@use './base/global';
+@use './currency';
+// @use './components/copyable';
+@use './abstracts' as *;
+@use './components/link';
+@use './components/button';
+@use './components/svg';
+@use './components/form';
+// @use './components/label-in-border';
+@use './components/table';
+@use './components/sticky-top-gradient';
+// @use './components/card';
+
+@use './components/navbar';
+
+.container {
+   padding-top: 3rem;
+   text-align: center;
+}

@@ -1,0 +1,120 @@
+textarea {
+   width: -webkit-fill-available;
+}
+
+input#edit-ta-hr, input#edit-ta-min {
+   width: 3rem;
+}
+
+.form-floating.input-group > label {
+   z-index: 3;
+}
+
+.ms-parent.multiple-select {
+   width: 100%; // @todo figure out why multipleSelect applies an inine style to these classes
+   height: 58px;
+
+   & > button.ms-choice {
+      height: 100%;
+      border-color: var(--bs-gray-700);
+      font-weight: normal;
+      box-shadow: none;
+
+      & > span {
+         top: auto;
+         padding: 0 0.75rem 1rem;
+      }
+
+      &:focus {
+         color: #212529;
+         background-color: #fff;
+         border-color: #999999;
+         outline: 0;
+         box-shadow: 0 0 0 0.25rem rgb(51 51 51 / 25%);
+      }
+      &:hover {
+         transform: scale(1);
+      }
+   }
+
+   & + label {
+      position: absolute;
+      top: 0;
+      left: auto;
+      height: 100%;
+      padding: 1rem 0.75rem;
+      pointer-events: none;
+      border: 1px solid transparent;
+      transform-origin: 0 0;
+      transition: opacity 0.1s ease-in-out, transform 0.1s ease-in-out;
+      
+      opacity: 0.65;
+      transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+
+      display: block;
+   }
+}
+
+.form-floating {
+   > label {
+      left: auto; // the default `left: 0;` misaligns the label with the input field content
+      opacity: 0.5 ; // I like to see at a glance which inputs are empty and which are not
+      color: var(--bs-gray-900);
+      font-weight: bold;
+      transform-origin: 0 0; // base point of transformation for rotation or scale or whatever is (0, 0), i.e.: top left corner
+      transition: 
+         opacity 0.1s ease-in-out, 
+         transform 0.1s ease-in-out
+      ;
+   }
+   
+   // Fix background color of the floating label when .altered is applied to a textarea
+   >textarea.altered:focus~label::after, 
+   >textarea.altered:not(:placeholder-shown)~label::after {
+      background-color: transparent;
+   }
+
+   > .form-control:focus ~ label,
+   > .form-control:not(:placeholder-shown) ~ label,
+   > .form-select ~ label {
+      opacity: 1;
+   }
+}
+label {
+   font-weight: bold;
+}
+
+.form-switch#language {
+   $checkboxW: 3em;
+
+   & > * {
+      position: absolute;
+   }
+   & > label#language-fr {
+      left: calc(50% - $checkboxW/2 - 27px);
+   }
+   & > input.form-check-input {
+      left: calc(50% - $checkboxW/2);
+
+      margin-left: 0;
+      margin-top: 0;
+      border-radius: 0.25em;
+      width: $checkboxW;
+      height: 1.5em;
+      border-color: var(--bs-gray-700);
+   }
+   & > label#language-en {
+      left: calc(50% + $checkboxW/2 + 7px);
+   }
+}
+
+.altered {
+   background-color: lightyellow;
+   &:focus {
+      background-color: lightyellow;
+   }
+   &:checked[type=checkbox] {
+      background-color: rgb(255, 255, 200);
+      background-image: url("/svg/form-check-input-checked-black.svg");
+   }
+}

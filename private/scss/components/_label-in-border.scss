@@ -1,0 +1,24 @@
+.label-in-border {
+   $padding-y: 1rem;
+   $padding-x: 0.25rem;
+
+   position: relative;
+   padding: $padding-y $padding-x;
+   margin: 1rem 0;
+
+   & > label:first-child {
+      position: absolute;
+      height: 1rem;
+      top: -0.5rem;
+      line-height: 0.9rem;
+      left: calc($padding-y - 0.25rem); // minus card border radius
+
+      background: white;
+      padding: 0 0.25rem;
+      width: fit-content;
+
+      & .form-check-input {
+         margin-top: 0;
+      }
+   }
+}

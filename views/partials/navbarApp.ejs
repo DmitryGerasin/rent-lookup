@@ -1,0 +1,36 @@
+<%#
+  Minimal app navbar — dashboard + logout
+  Expects: appName (optional), firstName, lastName
+%>
+<%
+const userName = ((typeof firstName !== 'undefined' ? firstName : '') + ' ' + (typeof lastName !== 'undefined' ? lastName : '')).trim() || 'User'
+const brand = typeof appName !== 'undefined' ? appName : 'App'
+%>
+<nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom shadow-sm">
+   <div class="container-fluid flex-wrap gap-2">
+      <a class="navbar-brand fw-semibold" href="/dashboard"><%= brand %></a>
+      <button
+         class="navbar-toggler"
+         type="button"
+         data-bs-toggle="collapse"
+         data-bs-target="#appNavCollapse"
+         aria-controls="appNavCollapse"
+         aria-expanded="false"
+         aria-label="Menu"
+      >
+         <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="appNavCollapse">
+         <ul class="navbar-nav align-items-lg-center gap-lg-2">
+            <li class="nav-item">
+               <span class="nav-link disabled text-body"><%= userName %></span>
+            </li>
+            <li class="nav-item">
+               <button type="button" id="logoutBtn" class="btn btn-outline-danger btn-sm">
+                  Log out
+               </button>
+            </li>
+         </ul>
+      </div>
+   </div>
+</nav>

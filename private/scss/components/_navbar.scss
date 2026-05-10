@@ -1,0 +1,61 @@
+@use '../vendors/bootstrap'; // to be able to use bootstrap defined variables
+@use '../base/resets';
+@use '../abstracts' as *;
+
+nav {
+   font-weight: bold;
+   position: sticky;
+   top: 0;
+   height: $navBarHeight;
+
+   display: flex;
+   flex-direction: row;
+   justify-content: space-between;
+   align-items: center;
+
+   // background-color: aliceblue;
+   background-image: linear-gradient(to top, transparent , aliceblue);
+
+   & img#logo {
+      content: url(/img/SDN%20Logo.png);
+      position: absolute;
+      left: calc(50% - $navBarHeight/2);
+      top: 0;
+      width: calc($logoProportion * $navBarHeight);
+      height: calc($logoProportion * $navBarHeight);
+      cursor: pointer;
+
+      &:hover {
+         opacity: 0.85;
+         transform: scale(0.925);
+      }
+
+      @include mobile() {
+         display: none;
+      }
+   }
+
+   & .nav-item {
+      a:not(.dropdown-item) {
+         &:hover {
+            background-color: white;
+         }
+      }
+      // Exclude the logout button from the hover effect
+      & #logoutBtn {
+         border-radius: 0;
+         box-shadow: none;
+         
+         &:hover {
+            opacity: 1;
+            transform: scale(1);
+         }
+         & svg {
+            vertical-align: middle;
+            margin: 0;
+            width: 16px;
+            height: 16px;
+         }
+      }
+   }
+}

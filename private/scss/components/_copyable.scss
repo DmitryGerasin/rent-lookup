@@ -1,0 +1,19 @@
+.copied {
+   position: absolute;
+   z-index: 5000; // to be on top of bootstrap modals
+   color: #155fde;
+   font-size: 18pt; // change together with element width value in copyable.js
+   transition: // transition durations and delays need to work with the removeFadeOut(e) function delay
+      top 0.75s ease-in, 
+      opacity 1s ease-out 0.2s;
+
+   &::after { content: "copié"; }
+}
+
+.copyable {
+   cursor: copy !important; // to trump .btn {cursor:pointer}
+   &:hover {
+      -webkit-transform: scale(1.014); // does not work on in-line elements like <span>, use this on the nearest parent <div> or create a div
+      transform: scale(1.014); // added for compatibility
+   }
+}

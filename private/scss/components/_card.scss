@@ -1,0 +1,31 @@
+@use '../abstracts' as *;
+
+aside div.card {
+   margin-bottom: $card-mb;
+   border: 2px solid;
+
+   & > div.card-header, & > div.card-body {
+      margin: 0;
+      padding: 0rem 0.45rem;
+
+      & p {
+         margin: 0;
+      }
+
+      & span {
+         &.author,
+         &.lawyer,
+         &.date {
+            font-weight: bold;
+         }
+      }
+
+      &.card-header {
+         overflow: scroll;
+      }
+
+      &.card-body {
+         cursor: pointer;
+      }
+   }
+}

@@ -1,0 +1,58 @@
+// Shell around the Quill mount point.
+
+.quill-editor-container {
+   border: 1px solid #ccc;
+   border-radius: 4px;
+   background: white;
+}
+
+.quill-toolbar {
+   border-bottom: 1px solid #ccc;
+   background: #f8f9fa;
+}
+
+.quill-editor .ql-editor {
+   min-height: 120px;
+   max-height: 300px;
+   overflow-y: auto;
+   font-family: inherit;
+   font-size: 14px;
+   line-height: 1.5;
+}
+
+.quill-editor .ql-editor:focus {
+   outline: none;
+}
+
+.quill-editor .ql-editor p {
+   margin-bottom: 0.5em;
+}
+
+.quill-editor .ql-editor ul,
+.quill-editor .ql-editor ol {
+   padding-left: 1.5em;
+}
+
+.ql-snow {
+   .ql-picker {
+      &.ql-size {
+
+         .ql-picker-label,
+         .ql-picker-item {
+            &::before {
+               content: attr(data-value) !important;
+            }
+         }
+      }
+   }
+}
+
+.ql-toolbar {
+   & svg {
+      vertical-align: text-top;
+      margin-top: -0.2rem;
+      margin-bottom: -0.3rem;
+      width: auto;
+      height: 28px;
+   }
+}

@@ -1,0 +1,40 @@
+// Device breakpoints
+$mobile: 480px;   // less than
+$tablet: 481px;   // and more
+$laptop: 769px;   // and more
+$desktop: 1025px; // and more
+
+
+
+// Fonts
+
+
+// Colors
+$lightGray: rgb(240, 240, 240);
+$darkBlue: #084187;
+$lightBlue: #3a8dc0;
+$brightBlue: #6fe2ff;
+$grayOverlay: rgba(0, 0, 0, 0.5);
+/** h-offset, v-offset, blur?, spread?, color */
+$boxShadow: 0 0 10px rgba(0, 0, 0, 0.15);
+// $primary-color: white;
+// $font-weights: (
+//    "regular": 400,
+//    "medium": 500,
+//    "bold": 700
+// );
+
+// Header
+$navBarHeight: 56px;
+$sideBarWidth: 300px;
+$ulPadding: 30px;
+$liMargin: 10px;
+$numberOfColumns: 1;
+$radiusLarge: 10px;
+$radiusSmall: 3px;
+$logoProportion: 0.92;
+
+
+$contentH: calc(100vh - $navBarHeight);
+$aside-padding-x: 0.5rem;
+$card-mb: 0.5rem;

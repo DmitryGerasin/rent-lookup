@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+   <%# Required meta tags %>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+   <%- include('../partials/csrf.ejs') %>
+
+   <%# Icon %>
+   <link rel="shortcut icon" href="/favicon.ico?cache=<%= process.env.CACHE_BUSTER %>" type="image/x-icon">
+
+   <%# JS %>
+   <script async src="https://www.google.com/recaptcha/api.js"></script>
+   <script defer src="/js/vendors/jquery.min.js?cache=<%= process.env.CACHE_BUSTER %>"></script>
+   <script defer src="/js/login.bundle.js?cache=<%= process.env.CACHE_BUSTER %>"></script>
+   <script defer src="/js/vendors/bootstrap.bundle.min.js?cache=<%= process.env.CACHE_BUSTER %>"></script>
+
+   <%# CSS %>
+   <link rel="stylesheet" href="/css/users.min.css?cache=<%= process.env.CACHE_BUSTER %>">
+
+   <title><%= pageTitle %></title>
+</head>
+
+<body class="login-page min-vh-100">
+   <div class="container py-4">
+      <div class="login-card bg-white mx-auto">
+         <%- include('../partials/loginLogo.ejs', {companyName}) %>
+
+         <%- include('../partials/messages.ejs') %>
+
+         <%- include('./loginForm.ejs') %>
+      </div>
+   </div>
+</body>
+
+</html>

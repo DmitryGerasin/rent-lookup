@@ -1,0 +1,109 @@
+<%
+   const asList = (value) => {
+      if (!value) return []
+      if (Array.isArray(value)) return value.filter(Boolean)
+      return [value]
+   }
+
+   /** Passport / flash `error` is a string or string[]; some pages use `error` as a structured object (e.g. register invalid token) — do not treat those as flash. */
+   const flashErrorList = () => {
+      if (typeof error === `undefined` || error === null || error === ``) return []
+      if (Array.isArray(error)) return error.filter(Boolean)
+      if (typeof error === `string`) return [error]
+      if (typeof error === `object`) return []
+      return []
+   }
+
+   const buckets = {
+      danger: [
+         ...flashErrorList(),
+         ...asList(typeof alert_danger !== `undefined` ? alert_danger : []),
+      ],
+      warning: [
+         ...asList(typeof errors !== `undefined` ? errors.map(err => err.msg || err.message || err) : []),
+         ...asList(typeof alert_warning !== `undefined` ? alert_warning : []),
+      ],
+      info: asList(typeof alert_info !== `undefined` ? alert_info : []),
+      success: asList(typeof alert_success !== `undefined` ? alert_success : []),
+      primary: asList(typeof alert_primary !== `undefined` ? alert_primary : []),
+      secondary: asList(typeof alert_secondary !== `undefined` ? alert_secondary : []),
+      light: asList(typeof alert_light !== `undefined` ? alert_light : []),
+      dark: asList(typeof alert_dark !== `undefined` ? alert_dark : []),
+   }
+
+%>
+
+<%# One bucket per Bootstrap alert-* variant. %>
+<div id="messagesContainer">
+   <div id="dangerContainer">
+      <% buckets.danger.forEach((item) => { %>
+         <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <%= item %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+         </div>
+      <% }) %>
+   </div>
+
+   <div id="primaryContainer">
+      <% buckets.primary.forEach((item) => { %>
+         <div class="alert alert-primary alert-dismissible fade show" role="alert">
+            <%= item %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+         </div>
+      <% }) %>
+   </div>
+
+   <div id="secondaryContainer">
+      <% buckets.secondary.forEach((item) => { %>
+         <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+            <%= item %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+         </div>
+      <% }) %>
+   </div>
+
+   <div id="successContainer">
+      <% buckets.success.forEach((item) => { %>
+         <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <%= item %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+         </div>
+      <% }) %>
+   </div>
+
+   <div id="warningContainer">
+      <% buckets.warning.forEach((item) => { %>
+         <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <%= item %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+         </div>
+      <% }) %>
+   </div>
+
+   <div id="infoContainer">
+      <% buckets.info.forEach((item) => { %>
+         <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <%= item %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+         </div>
+      <% }) %>
+   </div>
+
+   <div id="lightContainer">
+      <% buckets.light.forEach((item) => { %>
+         <div class="alert alert-light alert-dismissible fade show" role="alert">
+            <%= item %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+         </div>
+      <% }) %>
+   </div>
+
+   <div id="darkContainer">
+      <% buckets.dark.forEach((item) => { %>
+         <div class="alert alert-dark alert-dismissible fade show" role="alert">
+            <%= item %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+         </div>
+      <% }) %>
+   </div>
+</div>

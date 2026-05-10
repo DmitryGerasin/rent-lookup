@@ -1,0 +1,14 @@
+// 1. My variable overrides (includes the svg overrides)
+@import '../vendors-extensions/bootstrap';
+
+// 2. Bootswatch variables
+@import './bootswatch/flatly/variables';
+
+// 3. Bootstrap SCSS
+@import '../../../node_modules/bootstrap/scss/bootstrap.scss';
+
+// 4. Bootswatch
+@import './bootswatch/flatly/bootswatch';
+
+// 5. My bootswatch data:image/svg+xml overrides
+@import '../vendors-extensions/bootswatch';

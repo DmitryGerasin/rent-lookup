@@ -1,0 +1,43 @@
+@use '../vendors/bootstrap';
+@use '../abstracts/' as *;
+
+.sticky-top-gradient {
+   @extend .sticky-top;
+   
+   &::before {
+      content: '';
+      position: absolute;
+      bottom: -0.4rem;
+      top: -0.3rem;
+      left: -$aside-padding-x;
+      width: calc(100% + 2 * $aside-padding-x);
+      // background-color: aliceblue; // for browsers that do not support gradients
+      background-image: linear-gradient(
+         to top, 
+         transparent , 
+         aliceblue, 
+         aliceblue, 
+         aliceblue, 
+         aliceblue
+      );
+      z-index: -1;
+   }
+   
+}
+
+.sticky-top-gradient-sharper {
+   @extend .sticky-top-gradient;
+
+   &::before {
+      background-image: linear-gradient(
+         to top, 
+         transparent , 
+         aliceblue, 
+         aliceblue, 
+         aliceblue, 
+         aliceblue, 
+         aliceblue, 
+         aliceblue
+      );
+   }
+}

@@ -1,0 +1,9 @@
+
+// Bootswatch overrides
+
+.modal,
+.toast {
+   .btn-close {
+      background-image: url("/svg/bootstrap/btn-close.svg"); // If this one is updated, see also the bootstrap override in private/scss/vendors-extensions/_bootstrap.scss
+   }
+}

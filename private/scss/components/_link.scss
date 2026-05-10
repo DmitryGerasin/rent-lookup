@@ -1,0 +1,16 @@
+a.cursor-not-allowed {
+   cursor: not-allowed!important;
+   pointer-events: all!important;
+}
+
+td.fill-with-link { // make <a> fill <td>
+   position:relative;
+
+   & > a {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+   }
+}

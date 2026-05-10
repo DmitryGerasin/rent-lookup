@@ -1,0 +1,22 @@
+@use './variables' as *;
+
+@mixin mobile() {
+   @media screen and (max-width: $mobile) {
+      @content;
+   }
+}
+@mixin tablet() {
+   @media screen and (min-width: $tablet) {
+      @content;
+   }
+}
+@mixin laptop() {
+   @media screen and (min-width: $laptop) {
+      @content;
+   }
+}
+@mixin desktop() {
+   @media screen and (min-width: $desktop) {
+      @content;
+   }
+}
