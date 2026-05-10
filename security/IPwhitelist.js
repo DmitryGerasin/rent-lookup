@@ -3,6 +3,7 @@ const whitelist            = require(`../config/ip.json`)
 const {
    PRODUCTION,
    USE_IP_WHITELIST,
+   APP_BEHIND_DOCKER_PROXY,
 }                       = require(`../config`)
 
 const normalizeIp = (ip = ``) => String(ip).replace(/^::ffff:/, ``)
@@ -14,6 +15,23 @@ const isLoopbackIp = (ip) => {
    const value = normalizeIp(ip)
    return value === `127.0.0.1` || value === `::1`
 }
+
+/**
+ * True for loopback or RFC1918-style private addresses (typical Docker bridge / LAN reverse proxy).
+ */
+const isPrivateNetworkPeer = (ip) => {
+   const v = normalizeIp(ip)
+   if (v === ``) return false
+   if (isLoopbackIp(v)) return true
+   if (/^10\./.test(v)) return true
+   if (/^172\.(1[6-9]|2\d|3[0-1])\./.test(v)) return true
+   if (/^192\.168\./.test(v)) return true
+   return false
+}
+
+/** In production, the TCP peer in front of Express must look like local nginx (bare metal) or Docker bridge. */
+const productionDirectPeerOk = (directPeerIp) =>
+   APP_BEHIND_DOCKER_PROXY ? isPrivateNetworkPeer(directPeerIp) : isLoopbackIp(directPeerIp)
 
 /**
  * Identifies the client based on the IP addresses in the whitelist.
@@ -36,8 +54,9 @@ module.exports = {
       // (supposed to be client IP in development and nginx IP in production)
       const directPeerIp = normalizeIp(req.socket?.remoteAddress || ``)
 
-      // In production, the app should only be reachable through local nginx.
-      if (PRODUCTION && !isLoopbackIp(directPeerIp)) {
+      // In production, the peer should be loopback (nginx on same host) or a private/Docker address when
+      // APP_BEHIND_DOCKER_PROXY=true. Development unchanged (PRODUCTION is false).
+      if (PRODUCTION && !productionDirectPeerOk(directPeerIp)) {
          console.error(`!!ALERT!! direct access attempt from >>${directPeerIp || `unknown`}<<`)
          return errorCodes(res, 403, `${req.headers.host} is not available`)
       }

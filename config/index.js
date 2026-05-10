@@ -28,6 +28,8 @@ const MYSQL_DATABASE = requireNonEmptyEnv('MYSQL_DATABASE')
 
 // Security
 const USE_IP_WHITELIST = false
+/** Production: nginx reaches Node on 127.0.0.1 (bare metal). Docker: peer is a private bridge IP — set `APP_BEHIND_DOCKER_PROXY=true`. */
+const APP_BEHIND_DOCKER_PROXY = process.env.APP_BEHIND_DOCKER_PROXY === `true` // if not set then it is not running in docker
 const REGISTRATION_ENABLED = false
 const INVITATION_TOKEN_EXPIRY_HOURS = 48
 const BYPASS_AUTH_IN_DEV = true
@@ -38,7 +40,7 @@ const REQUEST_BODY_LIMIT = '50kb'
 // Express
 const EXPRESS_SESSION_SECRET = requireNonEmptyEnv('EXPRESS_SESSION_SECRET')
 const EXPRESS_SESSION_KEY = requireNonEmptyEnv('EXPRESS_SESSION_KEY')
-// const sessionTimeout = requireNonEmptyEnv('sessionTimeout')
+const sessionTimeout = 3 * 60 * 60 * 1000 // 3 hours
 
 // Geocodio
 const GEOCODIO_API_KEY = requireNonEmptyEnv('GEOCODIO_API_KEY')
@@ -53,8 +55,8 @@ const RECAPTCHA_SECRET_KEY = requireNonEmptyEnv('RECAPTCHA_SECRET_KEY')
 
 // App
 const appHomePage = `/dashboard`
-const appName = `Loyers QC`
-const appNameLong = `Analyse des loyers — Québec`
+const appName = `Rent Analysis`
+const appNameLong = `Rent Analysis Quebec`
 const VALID_ROLES = [
    `admin`,
    `user`,
@@ -114,6 +116,7 @@ module.exports = {
    LOG_REQUEST_EXEMPTIONS,
    POST_LOGIN_REDIRECT_EXEMPTIONS,
    USE_IP_WHITELIST,
+   APP_BEHIND_DOCKER_PROXY,
    USE_LOG_REQUEST_IN_DEVELOPMENT,
    REQUEST_BODY_LIMIT,
    GEOCODIO_API_KEY,
@@ -137,4 +140,5 @@ module.exports = {
    RECAPTCHA_SITE_KEY,
    RECAPTCHA_SECRET_KEY,
    rentalAnalysis,
+   sessionTimeout,
 }

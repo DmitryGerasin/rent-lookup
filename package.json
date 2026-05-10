@@ -31,6 +31,7 @@
     "dotenv": "^17.4.2",
     "ejs": "^3.1.10",
     "express": "^5.2.1",
+    "express-mysql-session": "^3.0.3",
     "express-rate-limit": "^8.5.1",
     "express-session": "^1.19.0",
     "geocodio-library-node": "^1.15.0",

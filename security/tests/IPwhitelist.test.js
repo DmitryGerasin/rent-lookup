@@ -9,16 +9,18 @@ describe(`security/IPwhitelist`, () => {
       PRODUCTION = false,
       DEVELOPMENT = true,
       USE_IP_WHITELIST = true,
+      APP_BEHIND_DOCKER_PROXY = false,
       whitelist = {},
    } = {}) => {
       jest.resetModules()
       mockErrorCodes.mockReset()
 
-      jest.doMock(`../../services/errorCodes`, () => mockErrorCodes)
+      jest.doMock(`../../middleware/errorCodes`, () => mockErrorCodes)
       jest.doMock(`../../config`, () => ({
          PRODUCTION,
          DEVELOPMENT,
          USE_IP_WHITELIST,
+         APP_BEHIND_DOCKER_PROXY,
       }))
       jest.doMock(`../../config/ip.json`, () => whitelist, { virtual: false })
 
@@ -26,7 +28,7 @@ describe(`security/IPwhitelist`, () => {
    }
 
    afterEach(() => {
-      jest.dontMock(`../../services/errorCodes`)
+      jest.dontMock(`../../middleware/errorCodes`)
       jest.dontMock(`../../config`)
       jest.dontMock(`../../config/ip.json`)
       if (consoleErrorSpy) {
@@ -58,6 +60,29 @@ describe(`security/IPwhitelist`, () => {
          `dragon.local is not available`,
       )
       expect(next).not.toHaveBeenCalled()
+   })
+
+   it(`allows Docker bridge peer in production when APP_BEHIND_DOCKER_PROXY`, () => {
+      consoleErrorSpy = jest.spyOn(console, `error`).mockImplementation(() => {})
+      const { ensureIPWhitelisted } = loadMiddleware({
+         PRODUCTION: true,
+         DEVELOPMENT: false,
+         APP_BEHIND_DOCKER_PROXY: true,
+         whitelist: { "203.0.113.10": `Office` },
+      })
+
+      const req = {
+         socket: { remoteAddress: `172.18.0.4` },
+         ip: `203.0.113.10`,
+         headers: { host: `dragon.local` },
+      }
+      const res = { locals: {} }
+      const next = jest.fn()
+
+      ensureIPWhitelisted(req, res, next)
+
+      expect(next).toHaveBeenCalledTimes(1)
+      expect(mockErrorCodes).not.toHaveBeenCalled()
    })
 
    it(`allows loopback proxy access in production when forwarded IP is whitelisted`, () => {

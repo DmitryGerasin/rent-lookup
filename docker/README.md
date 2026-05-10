@@ -5,19 +5,20 @@ This folder holds configuration that is bind-mounted into the **MySQL**, **nginx
 ## Layout
 
 
-| Path                          | Mounted in container as / Purpose                                |
-| ----------------------------- | ---------------------------------------------------------------- |
-| `mysql/conf.d/realestate.cnf` | `/etc/mysql/conf.d/realestate.cnf`                               |
-| `mysql/02-app-user.sh`        | `/docker-entrypoint-initdb.d/02-app-user.sh` (MySQL init script) |
-| `mysql/examples/`             | Reference only (not mounted)                                     |
-| `nginx/nginx.conf`            | `/etc/nginx/nginx.conf`                                          |
-| `nginx/vhost/realestate.in`   | Mounted as `/etc/nginx/realestate.in`; `sed` replaces `@DOMAIN@` / `@APP_PORT@` from compose (`HOSTNAME`, `NODE_PORT`) into `/etc/nginx/conf.d/realestate.conf` before nginx starts |
-| `nginx/sites-enabled/*.conf`  | `/etc/nginx/sites-enabled/` (e.g. `reject-ip-requests.conf`; no domain-specific files here) |
-| `nginx/snippets/*.conf`       | `/etc/nginx/snippets/`                                           |
-| `nginx/nginx-errors/`         | `/var/www/nginx-errors/` (custom 50x pages)                      |
-| `certbot/www/`                | `/var/www/certbot/` (Let's Encrypt HTTP-01 challenge webroot)    |
-| `env.example`                 | Copy to repo root as `.env` (reference only, not mounted)        |
-| `../scripts/firewall/*.sh`    | Optional production host firewall (UFW + `DOCKER-USER`); see below |
+| Path                          | Mounted in container as / Purpose                                                                                                                                                   |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mysql/conf.d/realestate.cnf` | `/etc/mysql/conf.d/realestate.cnf`                                                                                                                                                  |
+| `mysql/00-require-mysql-env.sh` | First init script: exits if `MYSQL_ROOT_PASSWORD`, `MYSQL_USER`, or `MYSQL_PASSWORD` is empty, or if `MYSQL_DATABASE` ≠ `realestate` |
+| `mysql/02-app-user.sh`        | Grants on `_User` for `MYSQL_USER`                                                                                                                                                |
+| `mysql/examples/`             | Reference only (not mounted)                                                                                                                                                        |
+| `nginx/nginx.conf`            | `/etc/nginx/nginx.conf`                                                                                                                                                             |
+| `nginx/vhost/realestate.conf.tmpl` | Plain-text vhost with `@DOMAIN@`, `@APP_HOST@`, `@APP_PORT@`; `sed` writes `conf.d/realestate.conf`. Variable `proxy_pass` + Docker resolver. |
+| `nginx/sites-enabled/*.conf`  | `/etc/nginx/sites-enabled/` (e.g. `reject-ip-requests.conf`; no domain-specific files here)                                                                                         |
+| `nginx/snippets/*.conf`       | `/etc/nginx/snippets/`                                                                                                                                                              |
+| `nginx/nginx-errors/`         | `/var/www/nginx-errors/` (custom 50x pages)                                                                                                                                         |
+| `certbot/www/`                | `/var/www/certbot/` (Let's Encrypt HTTP-01 challenge webroot)                                                                                                                       |
+| `env.example`                 | Copy to repo root as `.env` (reference only, not mounted)                                                                                                                           |
+| `../scripts/firewall/*.sh`    | Optional production host firewall (UFW + `DOCKER-USER`); see below                                                                                                                  |
 
 
 Nginx uses the **Alpine** official image (`nginx:1.27-alpine`): `user nginx`, no `headers-more` module, and no Debian `modules-enabled` tree. The main config in this repo is written for that image.
@@ -32,6 +33,20 @@ Nginx uses the **Alpine** official image (`nginx:1.27-alpine`): `user nginx`, no
 - DNS **A** (and **AAAA** if you use IPv6) records for your public hostname(s) pointing at this server.
 - Ports **80** and **443** open to the internet (for Let’s Encrypt HTTP-01 and HTTPS).
 
+### Swap (strongly recommended on a 1 GB droplet)
+
+Without swap, MySQL (and the rest of the stack) can push the host into OOM as soon as memory spikes. Do this **once** on the server before relying on Docker:
+
+```bash
+sudo fallocate -l 2G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+```
+
+That adds **2 GB** swap so short spikes are less likely to kill processes. On very small disks, use `1G` instead of `2G`.
+
 ### Step 0 — Host firewall (production, Ubuntu/Debian with UFW)
 
 Run **before** you rely on this machine being exposed, and **from a session you know keeps SSH working** (console or correct allowlist). Wrong SSH rules can lock you out.
@@ -40,16 +55,14 @@ From the repo root:
 
 ```bash
 chmod +x scripts/firewall/ufw-docker-production.sh scripts/firewall/iptables-docker-user-web-only.sh
+# List ips to be allowed to connect via ssh
+export SSH_ALLOW_IPS="1.1.1.1 2.2.2.2"
+sudo -E scripts/firewall/ufw-docker-production.sh
 ```
 
 **UFW** — deny inbound by default, allow SSH only from your admin IPs.
 
    Edit `DEFAULT_SSH_IPS` in `scripts/firewall/ufw-docker-production.sh`, or pass addresses in the environment (preserved with `sudo -E`):
-
-   ```bash
-   export SSH_ALLOW_IPS="YOUR.IP.V4.HERE YOUR.OTHER.IP.HERE"
-   sudo -E ./scripts/firewall/ufw-docker-production.sh
-   ```
 
    The script uses `set -euo pipefail`: any failing `ufw` command stops the rest.
 
@@ -62,18 +75,23 @@ cp docker/env.example .env
 ```
 
 Edit `.env`: set strong secrets (`MYSQL_ROOT_PASSWORD`, `MYSQL_PASSWORD`, session/CSRF keys, API keys, etc.). 
+
 ```bash
 openssl rand -hex 16 | pbcopy
 ```
-Set **`HOSTNAME`** to the public FQDN (no `https://`; used by the Node app for `PUBLIC_BASE_URL` and by nginx for `server_name` and `/etc/letsencrypt/live/$HOSTNAME/`).  
-Set **`NODE_PORT`** to the port the app listens on inside the stack (default `3000`); nginx’s upstream uses the same value.  
-Ensure **`NODE_ENV=production`** for a public deployment.
+
+Set `**HOSTNAME**` to the public FQDN (no `https://`; used by the Node app for `PUBLIC_BASE_URL` and by nginx for `server_name` and `/etc/letsencrypt/live/$HOSTNAME/`).  
+Set `**NODE_PORT**` to the port the app listens on inside the stack (default `3000`); nginx’s upstream uses the same value.  
+Set `**NGINX_APP_HOST**` to the Compose **service** name for the Node app (default `app`), not the container name — that is what Docker’s internal DNS resolves.  
+Ensure `**NODE_ENV=production**` for a public deployment.
+
+For Docker Compose, **`APP_BEHIND_DOCKER_PROXY`** defaults to **`true`** so the IP check treats nginx’s bridge IP (e.g. `172.18.0.x`) as a trusted proxy. On **bare metal** nginx→Node on `127.0.0.1`, set **`APP_BEHIND_DOCKER_PROXY=false`** in `.env`.
 
 ### Step 2 — Nginx / TLS paths
 
-You do **not** commit a per-domain vhost: `docker/nginx/vhost/realestate.in` is generic; at container start, `docker-compose` passes `HOSTNAME` and `NODE_PORT` into `sed`, which writes `/etc/nginx/conf.d/realestate.conf`.
+You do **not** commit a per-domain vhost: edit `docker/nginx/vhost/realestate.conf.tmpl` only. Compose passes `HOSTNAME`, `NODE_PORT`, and `NGINX_APP_HOST` (default `app`) into the container; the entrypoint runs `sed` then **`nginx -t`** then **`exec nginx`**. **`proxy_pass`** uses a **variable** (`$upstream_node_app`) plus **`resolver 127.0.0.11`** in `nginx.conf` so Docker DNS is used at request time and **`nginx -t`** does not require `app` to exist yet (avoids *host not found in upstream*). The rendered file lives under **`conf.d/`** because `sites-enabled` is bind-mounted read-only from the repo.
 
-Certbot on the host must issue a certificate for that same **`HOSTNAME`** so paths match:
+Certbot on the host must issue a certificate for that same `**HOSTNAME`** so paths match:
 
 - TLS files: `/etc/letsencrypt/live/<HOSTNAME>/` (bind-mounted read-only).
 - ACME webroot: `/var/www/certbot` (mapped from `docker/certbot/www` on the host).
@@ -94,6 +112,14 @@ sudo ln -s /snap/bin/certbot /usr/bin/certbot
 sudo certbot certonly --standalone -d your.domain.example -d www.your.domain.example
 ```
 
+**DH parameters for nginx (once per server; do before HTTPS works)**
+
+The vhost enables **`ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem`**. Certbot **`standalone`** does **not** create that file. Generate it on the host (can take **several minutes** on a small CPU):
+
+```bash
+sudo openssl dhparam -out /etc/letsencrypt/ssl-dhparams.pem 2048
+```
+
 **Option B — Webroot (nginx will serve `/.well-known/acme-challenge/` from `docker/certbot/www`)**
 
 1. Create the webroot and ensure nginx can read it:
@@ -111,17 +137,21 @@ Certbot’s `**options-ssl-nginx.conf**` and `**ssl-dhparams.pem**` are normally
 ### Step 4 — Build and start the stack
 
 #### 4.1 Installing docker
+
 Update your existing list of packages:
+
 ```bash
 sudo apt update
 ```
 
 Install a few prerequisite packages which let `apt` use packages over HTTPS:
+
 ```bash
 sudo apt install ca-certificates curl gnupg
 ```
 
 Add the GPG key for the official Docker repository to your system:
+
 ```bash
 sudo install -m 0755 -d /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
@@ -129,16 +159,19 @@ sudo chmod a+r /etc/apt/keyrings/docker.gpg
 ```
 
 Add the Docker repository to APT sources:
+
 ```bash
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 ```
 
 Update your existing list of packages again for the addition to be recognized:
+
 ```bash
 sudo apt update
 ```
 
 Make sure you are about to install from the Docker repo instead of the default Ubuntu repo:
+
 ```bash
 apt-cache policy docker-ce
 
@@ -155,17 +188,20 @@ docker-ce:
 ```
 
 Install docker:
+
 ```bash
 sudo apt install docker-ce
 ```
 
 To avoid typing sudo whenever you run the docker command, add your username to the docker group:
+
 ```bash
 sudo usermod -aG docker ${USER}
 su - ${USER}
 ```
 
 #### 4.2. Build
+
 From the **repository root** (where `docker-compose.yml` lives):
 
 ```bash
@@ -182,13 +218,10 @@ docker compose logs -f nginx
 ```
 
 #### 4.3. iptables
-**Docker `DOCKER-USER`** — after the **Docker daemon** is running and has created the **`DOCKER-USER`** iptables chain (normally on daemon start; `docker compose up -d` is enough to confirm). The script **exits with an error** if `docker info` fails or the chain is missing, so it will not silently add rules before Docker has initialized networking.
+
+**Docker `DOCKER-USER`** — after the **Docker daemon** is running and has created the `**DOCKER-USER`** iptables chain (normally on daemon start; `docker compose up -d` is enough to confirm). The script **exits with an error** if `docker info` fails or the chain is missing, so it will not silently add rules before Docker has initialized networking.
 
    It restricts what reaches published container ports: only new inbound TCP **80** and **443** on the default-route interface are allowed through to Docker; other inbound traffic to containers from that interface is dropped.
-
-   ```bash
-   sudo ./scripts/firewall/iptables-docker-user-web-only.sh
-   ```
 
    Re-run this script after reboot if your setup does not persist `iptables` rules (consider `iptables-persistent`, `netfilter-persistent`, or a systemd oneshot).
 
@@ -196,10 +229,13 @@ If you use **IPv6** for public web, add matching rules (UFW IPv6 and/or `ip6tabl
 
 ### Step 5 — MySQL initialization (first run only)
 
-On the **first** start with an empty `mysql_data` volume, the image runs:
+On the **first** start with an empty `mysql_data` volume, init runs (order):
 
-1. `config/mysql/schema.sql`
-2. `docker/mysql/02-app-user.sh` (creates `app` and grants on `_User`)
+1. `docker/mysql/00-require-mysql-env.sh` — **fails fast** if root/app passwords are empty or `MYSQL_DATABASE` is not `realestate` (empty `MYSQL_ROOT_PASSWORD` leads to passwordless root and broken healthchecks).
+2. `config/mysql/schema.sql`
+3. `docker/mysql/02-app-user.sh` — grants on `_User` for `MYSQL_USER`
+
+Set **`MYSQL_ROOT_PASSWORD`**, **`MYSQL_USER`**, and **`MYSQL_PASSWORD`** in `.env` **before** the first boot with a new volume (see `docker/env.example`).
 
 If you need to change schema or grants **after** data already exists, apply migrations or SQL manually; re-creating the volume wipes the database:
 
@@ -254,10 +290,12 @@ docker compose exec nginx nginx -t && docker compose exec nginx nginx -s reload
 
 ### MySQL shell (from host)
 
+From the project directory (Compose loads `.env` into the mysql container; root password is non-empty after proper init):
+
 ```bash
-docker compose exec mysql mysql -u root -p
-# or app user:
-docker compose exec mysql mysql -u app -p realestate
+docker compose exec mysql mysql -uroot -p"$MYSQL_ROOT_PASSWORD" realestate
+# App user (INSERT/UPDATE `_User` only):
+docker compose exec mysql mysql -h 127.0.0.1 -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" realestate
 ```
 
 ### Certificate renewal
@@ -280,7 +318,7 @@ If you use **webroot** renewal, keep port 80 reachable and the `docker/certbot/w
 ### Security notes
 
 - Never commit `.env` or real passwords.
-- Restrict `MYSQL_ROOT_PASSWORD` to admin use; the app uses the `app` user from init scripts.
+- Restrict `MYSQL_ROOT_PASSWORD` to admin use; the app uses **`MYSQL_USER`** from `.env` inside the stack.
 - Review `docker/nginx/sites-enabled/reject-ip-requests.conf` — it drops direct IP access on 80/443.
 
 ---
@@ -294,5 +332,5 @@ If you use **webroot** renewal, keep port 80 reachable and the `docker/certbot/w
 | 502 from nginx              | `docker compose logs app`; ensure `app` service is healthy and `upstream` points to `app:3000`.                                       |
 | App cannot connect to MySQL | `MYSQL_HOST=mysql` in compose; DB user/password; `realestate.cnf` must keep `bind-address = 0.0.0.0` for container networking.        |
 | Certbot challenge fails     | `docker/certbot/www` writable; vhost `location ^~ /.well-known/acme-challenge/`; DNS points to this server; port 80 open.             |
-
-
+| `docker stop` / `compose down` very slow or stuck | Usually **host** memory pressure or a stressed Docker daemon (OOM, swap thrash), not nginx config. Check `dmesg`, `free -h`, restart Docker (`systemctl restart docker`) before rebooting. This stack no longer runs the stock nginx `docker-entrypoint.sh`. |
+| **`docker ps` shows nginx with no `PORTS`** | The container has **no host port mapping** (often after `failed to bind ... [::]:80` on first `up`). Recreate: `docker compose down`, `sudo ss -tulpn \| grep ':80 '`, stop whatever else uses 80 if needed, then `docker compose up -d`. Confirm: `docker port real-estate-nginx` shows `80/tcp -> 0.0.0.0:80`. |

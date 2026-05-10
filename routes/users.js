@@ -9,6 +9,7 @@ const auth              = require('../security/auth')
 const {
    REGISTRATION_ENABLED,
    RECAPTCHA_SITE_KEY,
+   appName,
 }                       = require('../config')
 const {
    safeReturnPath,
@@ -16,14 +17,10 @@ const {
 const errHandling       = require('./errorHandling')
 const errorCodes        = require('../middleware/errorCodes')
 const express           = require('express')
-const Invitation        = require('../models/invitation')
-const User              = require('../models/user')
 const passport          = require('passport')
 const router            = express.Router()
 const security          = require('../security/captcha')
 const { timeStamp }     = require('../utils/timeStamp')
-
-const companyName = `Real Estate Company`
 
 
 /*============================================================================
@@ -44,8 +41,6 @@ async function getLogin(req, res) {
    try {
       res.render('./login/index', {
          appName,
-         appNameLong,
-         companyName: appName,
          captchaSiteKey: RECAPTCHA_SITE_KEY,
          pageTitle: 'Connexion',
          useLayout: false,

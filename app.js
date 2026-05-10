@@ -6,8 +6,9 @@ const {
    EXPRESS_SESSION_KEY,
    NODE_PORT,
    HTTP_BIND_ADDRESS,
-   // sessionTimeout,
+   sessionTimeout,
    REQUEST_BODY_LIMIT,
+   APP_BEHIND_DOCKER_PROXY,
 }                       = require(`./config`)
 const express           = require(`express`)
 const cookieParser      = require(`cookie-parser`)
@@ -27,8 +28,9 @@ const {
    globalErrorHandler,
 }                       = require('./middleware/globalErrorHandler')
 const session           = require(`express-session`)
-// const MySQLStore        = require(`express-mysql-session`)(session)
+const MySQLStore        = require(`express-mysql-session`)(session)
 const { timeStamp }     = require(`./utils/timeStamp`)
+const { mainPool }      = require(`./db/connections`)
 
 // 1. Set security headers before any middleware that can respond
 
@@ -53,12 +55,6 @@ app.use(express.json({ limit: REQUEST_BODY_LIMIT })) // 413 Entity Too Large on 
 app.use(mountPublicStatic)
 
 // 5. Express session
-// Create a new instance of the session store
-// const sqlSessionStore = new MySQLStore({
-//    expiration: sessionTimeout,
-//    createDatabaseTable: true,       // Automatically create the sessions table if it doesn't exist
-// }, mainPool)
-
 app.use(session({
    name: EXPRESS_SESSION_KEY, // name of the session cookie, meant to prevent express fingerprinting
    secret: EXPRESS_SESSION_SECRET, // secret to sign the session id cookie
@@ -67,18 +63,24 @@ app.use(session({
    cookie: { 
       // Protects against XSS attacks stealing cookies (cookies inaccessible to javascript)
       httpOnly: true,
-
+      
       // Cookies are only sent over HTTPS in production, with `trust proxy` set 
       // to 1 (App is behind nginx). In development, cookies are sent over HTTP 
       // to http://localhost:${PORT}
       secure: PRODUCTION ? true : false,
-
+      
       // When set to 'strict': if a user clicks a link to the site from an email 
       // or another website, they will appear logged out until they refresh or click 
       // a link within the site.
       sameSite: 'lax',
    },
-   // store: sqlSessionStore,
+   // Create a new instance of the session store
+   store: APP_BEHIND_DOCKER_PROXY 
+      ? new MySQLStore({
+         expiration: sessionTimeout,
+         createDatabaseTable: true,       // Automatically create the sessions table if it doesn't exist
+      }, mainPool) 
+      : undefined,
 }))
 
 // 6. Passport middleware. (must be after the express session middleware)

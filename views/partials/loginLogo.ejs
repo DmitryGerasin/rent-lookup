@@ -1,12 +1,12 @@
 <div class="text-center mb-4">
    <img
-      src="/img/SDN Logo.png?cache=<%= process.env.CACHE_BUSTER %>"
+      src="/img/Logo.png?cache=<%= process.env.CACHE_BUSTER %>"
       alt="Logo"
       class="d-block mx-auto mb-3"
       width="150"
       height="150"
    >
-   <h2 class="h2 mb-0"><%= typeof companyName !== 'undefined' ? companyName : 'Connexion' %></h2>
+   <h2 class="h2 mb-0"><%= typeof appName !== 'undefined' ? appName : 'Connexion' %></h2>
    <% if (typeof pageTitle !== 'undefined' && pageTitle === 'Inscription') { %>
       <h5 class="text-muted">Inscription</h5>
    <% } %>

@@ -1,15 +1,20 @@
-# Rendered at container start: @DOMAIN@ → HOSTNAME, @APP_PORT@ → NODE_PORT from docker-compose.
-# Do not use $ in placeholders here; normal nginx $variables are unchanged.
-
-upstream node_app {
-   server app:@APP_PORT@;
-}
+# Plain-text template committed to the repo. At container start, sed replaces:
+#   @DOMAIN@    → NGINX_DOMAIN (from HOSTNAME in .env)
+#   @APP_HOST@  → NGINX_APP_HOST (Compose service hostname; default app)
+#   @APP_PORT@  → NODE_PORT
+# Output is written to /etc/nginx/conf.d/realestate.conf (in-container only).
+# `proxy_pass` uses a variable so Docker DNS is queried at request time (not at `nginx -t`), with
+# `resolver 127.0.0.11` in nginx.conf.
 
 server {
    listen 443 ssl;
    listen [::]:443 ssl;
 
    server_name @DOMAIN@;
+
+   # Inheritance from http{} is not always enough for variable proxy_pass; keep resolver here.
+   resolver 127.0.0.11 valid=10s ipv6=off;
+   resolver_timeout 5s;
 
    include /etc/nginx/snippets/custom-50x.conf;
 
@@ -20,7 +25,10 @@ server {
    location / {
       allow all;
 
-      proxy_pass http://node_app;
+      # Split host/port so nginx does not resolve `app` at `nginx -t` (single `set` with full URL can).
+      set $upstream_host @APP_HOST@;
+      set $upstream_port @APP_PORT@;
+      proxy_pass http://$upstream_host:$upstream_port;
       proxy_http_version 1.1;
 
       proxy_set_header Host              $host;
@@ -31,7 +39,7 @@ server {
 
    ssl_certificate /etc/letsencrypt/live/@DOMAIN@/fullchain.pem;
    ssl_certificate_key /etc/letsencrypt/live/@DOMAIN@/privkey.pem;
-   include /etc/letsencrypt/options-ssl-nginx.conf;
+   # include /etc/letsencrypt/options-ssl-nginx.conf;
    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 }
 
