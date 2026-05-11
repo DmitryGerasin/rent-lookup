@@ -10,7 +10,7 @@ Reference for AI agents and developers. Use this when writing or refactoring SCS
 
 - Run `npm run dev-front` to compile SCSS.
 - SASS compiles `private/scss` → `public/css` (compressed, no source maps).
-- Page-specific entry points: `file.min.scss`, `person.min.scss`, `dashboard.min.scss`, etc.
+- Page-specific entry points: `file.min.scss`, `person.min.scss`, `rentAnalysis.min.scss`, `costOfOwnership.min.scss`, etc.
 
 ---
 
@@ -215,7 +215,7 @@ private/scss/
 ├── vendors/            # Bootstrap, bootswatch; thin `@use '../../../node_modules/.../*.css'` wrappers (e.g. `_quill-snow.scss`, `_jquery-ui.scss`, `_multiple-select.scss`)
 ├── vendors-extensions/ # Overrides for vendors; see README-bootstrap-svg-csp.md for Bootstrap `data:` → `/svg/bootstrap/` icons
 ├── vendors/mso/        # IGNORE — Excel styles for trust pages
-├── *.min.scss          # Page entry points (file, person, dashboard, etc.)
+├── *.min.scss          # Page entry points (file, person, rentAnalysis, etc.)
 ├── _family.scss        # Family section
 ├── _corp.scss          # Corp section
 ├── _history-log.scss   # History log base

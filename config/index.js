@@ -57,7 +57,7 @@ const RECAPTCHA_SITE_KEY = requireNonEmptyEnv('RECAPTCHA_SITE_KEY')
 const RECAPTCHA_SECRET_KEY = requireNonEmptyEnv('RECAPTCHA_SECRET_KEY')
 
 // App
-const appHomePage = `/dashboard`
+const appHomePage = `/rent-analysis`
 const appName = `Rent Analysis`
 const appNameLong = `Rent Analysis Quebec`
 const VALID_ROLES = [
@@ -87,11 +87,15 @@ const LOG_REQUEST_EXEMPTIONS = [
 ]
 
 const SAFE_RETURN_PATH_PREFIXES = [
-   `/dashboard`,
+   `/rent-analysis`,
+   `/cost-of-ownership`,
 ]
 
-/** Rental analysis filters, registry search box bounds, and dashboard chart constants (browser-safe). */
+/** Rental analysis filters, registry search box bounds, and rent-analysis chart constants (browser-safe). */
 const rentalAnalysis = require(`./rentalAnalysis`)
+
+/** Cost-of-ownership model defaults and estimate fractions (browser-safe). */
+const costOfOwnership = require(`./@models/costOfOwnership`)
 
 /**
  * URLs that should not overwrite `session.redirectTo` with the raw request path when unauthenticated
@@ -144,5 +148,6 @@ module.exports = {
    RECAPTCHA_SITE_KEY,
    RECAPTCHA_SECRET_KEY,
    rentalAnalysis,
+   costOfOwnership,
    sessionTimeout,
 }

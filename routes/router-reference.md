@@ -2,7 +2,7 @@
 
 Reference for AI agents and developers. Use this when adding or refactoring route handlers so they stay consistent with how this app wires Express, auth, and responses.
 
-**Mount point:** `routes/index.js` attaches these routers to the main app. That file is the source of truth for which paths sit behind `auth.ensureAuthenticated` and `rbac([...])`.
+**Mount point:** `routes/index.js` attaches these routers to the main app. That file is the source of truth for which paths sit behind `auth.ensureAuthenticated` and `rbac([...])`. Authenticated app pages in this repo include **`GET /rent-analysis`** (Quebec rental registry analysis) and **`GET /cost-of-ownership`** (monthly carrying-cost form); JSON **`POST /api/rental-analysis`** and **`POST /api/cost-of-ownership`** back the respective bundles.
 
 ---
 

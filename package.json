@@ -9,7 +9,7 @@
   "scripts": {
     "start": "nodemon app.js",
     "start:prod": "node app.js",
-    "build:assets": "sass --error-css private/scss:public/css --no-source-map --style=compressed && browserify private/js/dashboard/index.js -o public/js/dashboard.bundle.js && browserify private/js/login/index.js -o public/js/login.bundle.js && browserify private/js/error.js -o public/js/error.bundle.js",
+    "build:assets": "sass --error-css private/scss:public/css --no-source-map --style=compressed && browserify private/js/rentAnalysis/index.js -o public/js/rentAnalysis.bundle.js && browserify private/js/costOfOwnership/index.js -o public/js/costOfOwnership.bundle.js && browserify private/js/login/index.js -o public/js/login.bundle.js && browserify private/js/error.js -o public/js/error.bundle.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "vendor:sync": "node scripts/sync-vendor-assets.js",
     "postinstall": "npm run vendor:sync",
@@ -17,7 +17,8 @@
     "sass": "sass --error-css --watch private/scss:public/css --no-source-map --style=compressed",
     "watch-all": "concurrently --kill-others \"npm:watchJs-*\" \"npm:sass\"",
     "watchJs": "concurrently --kill-others \"npm:watchJs-*\"",
-    "watchJs-dashboard": "watchify private/js/dashboard/index -v -o               public/js/dashboard.bundle.js",
+    "watchJs-rent-analysis": "watchify private/js/rentAnalysis/index -v -o         public/js/rentAnalysis.bundle.js",
+    "watchJs-cost-of-ownership": "watchify private/js/costOfOwnership/index -v -o public/js/costOfOwnership.bundle.js",
     "watchJs-error": "watchify private/js/error -v -o                             public/js/error.bundle.js",
     "watchJs-login": "watchify private/js/login -v -o                             public/js/login.bundle.js"
   },

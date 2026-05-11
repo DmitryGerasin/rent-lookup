@@ -134,7 +134,7 @@ function buildBedroomsYearTable(filteredListings, yearMinInclusive, yearMaxInclu
 }
 
 /**
- * Aggregate registry payload into tables, scatter series, and metadata for the dashboard API.
+ * Aggregate registry payload into tables, scatter series, and metadata for the rental-analysis API.
  *
  * @param {object} registryResponse Shape from rentalregistry.ca (see `models/data.json`)
  */

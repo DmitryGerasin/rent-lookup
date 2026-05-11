@@ -6,21 +6,22 @@ const {
 } = require(`../config`)
 const router = require(`express`).Router()
 
-router.get(`/`, getDashboard)
+router.get(`/`, getRentAnalysis)
 
 module.exports = router
 
 /**
- * GET `/dashboard` — address form + client-side analysis (see `dashboard.bundle.js`).
+ * GET `/rent-analysis` — Rent analysis: address form + client-side registry analysis (see `rentAnalysis.bundle.js`).
  */
-async function getDashboard(req, res) {
+async function getRentAnalysis(req, res) {
    try {
       const user = req.user
-      res.render(`./dashboard/index`, {
+      res.render(`./rentAnalysis/index`, {
          appName,
          appNameLong,
          companyName: appNameLong,
          pageTitle: `Rent analysis`,
+         current: `rent-analysis`,
          firstName: user?.firstName ?? ``,
          lastName: user?.lastName ?? ``,
          isAdmin: user?.category === `admin`,
@@ -32,6 +33,6 @@ async function getDashboard(req, res) {
          rentalAnalysis,
       })
    } catch (err) {
-      return errHandling(req, res, err, __filename, `getDashboard`, `HTML`)
+      return errHandling(req, res, err, __filename, `getRentAnalysis`, `HTML`)
    }
 }

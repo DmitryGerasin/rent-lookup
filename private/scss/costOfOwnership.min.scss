@@ -1,0 +1,19 @@
+// Cost of ownership page — Bootstrap + shared components (same entry pattern as rentAnalysis.min.scss)
+
+@use './vendors/bootswatch/sketchy/variables' as v;
+@use '../../node_modules/bootstrap/scss/functions' as f;
+@use './vendors/bootstrap';
+
+@use './base/resets';
+@use './base/global';
+@use './abstracts' as *;
+@use './components/link';
+@use './components/button';
+@use './components/form';
+@use './components/navbar';
+
+.cost-of-ownership-main {
+   max-width: 960px;
+   margin-left: auto;
+   margin-right: auto;
+}

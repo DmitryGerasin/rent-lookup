@@ -23,7 +23,7 @@ const recaptchaDirectives = {
  */
 const styleSrcDirectives = [
    "'self'",
-   "https://fonts.googleapis.com", // style-src-elem: views/rtbc.ejs, views/reports/timeActivities/index.ejs, views/dashboard/index.ejs, views/all.ejs, views/admin/invoiceNow.ejs, views/error.ejs, views/file/index.ejs (historical), views/dragon/index.ejs (historical), views/trust/clientCard.ejs
+   "https://fonts.googleapis.com", // style-src-elem: views/rtbc.ejs, views/reports/timeActivities/index.ejs, views/rentAnalysis/index.ejs, views/all.ejs, views/admin/invoiceNow.ejs, views/error.ejs, views/file/index.ejs (historical), views/dragon/index.ejs (historical), views/trust/clientCard.ejs
    "https://bootswatch.com/4/lux/bootstrap.min.css", // views/trust/clientCard.ejs, views/trust/monthlyReport.ejs
    "https://use.fontawesome.com/releases/v5.6.3/css/all.css", // views/trust/clientCard.ejs, views/trust/monthlyReport.ejs
 ]
@@ -61,7 +61,7 @@ const helmetConfig = helmet({
 
          fontSrc: [ // Controls the sources that are allowed to load fonts.
             "https://use.fontawesome.com", // font-src: views/trust/clientCard.ejs
-            "https://fonts.gstatic.com", // font-src: views/rtbc.ejs, views/reports/timeActivities/index.ejs, views/dashboard/index.ejs, views/all.ejs, views/admin/invoiceNow.ejs, views/error.ejs; historical meta: views/file/index.ejs, views/dragon/index.ejs; also views/trust/clientCard.ejs
+            "https://fonts.gstatic.com", // font-src: views/rtbc.ejs, views/reports/timeActivities/index.ejs, views/rentAnalysis/index.ejs, views/all.ejs, views/admin/invoiceNow.ejs, views/error.ejs; historical meta: views/file/index.ejs, views/dragon/index.ejs; also views/trust/clientCard.ejs
          ],
 
          frameAncestors: ["'self'"], // Which origins are allowed to embed this page inside a <frame>, <iframe>, <embed>, or <object>. This is the reverse of frame-src.
@@ -132,7 +132,7 @@ const helmetConfig = helmet({
           *    VULNS:
           *    - prototype pollution
           *    - log injection
-          *    - stored XSS (dashboard)
+          *    - stored XSS (rent analysis UI)
           *    - SSRF (URL processing)
           *    - JSON bomb / resource exhaustion
           *

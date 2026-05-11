@@ -1,14 +1,16 @@
 <%#
-  Minimal app navbar — dashboard + logout
+  App navbar — Rent analysis, Cost of ownership, logout
   Expects: appName (optional), firstName, lastName
+  Optional: current — 'rent-analysis' | 'cost-of-ownership' for active link highlighting
 %>
 <%
 const userName = ((typeof firstName !== 'undefined' ? firstName : '') + ' ' + (typeof lastName !== 'undefined' ? lastName : '')).trim() || 'User'
 const brand = typeof appName !== 'undefined' ? appName : 'App'
+const navCurrent = typeof current !== 'undefined' ? current : ''
 %>
 <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom shadow-sm">
    <div class="container-fluid flex-wrap gap-2">
-      <a class="navbar-brand fw-semibold" href="/dashboard"><%= brand %></a>
+      <a class="navbar-brand fw-semibold" href="/rent-analysis"><%= brand %></a>
       <button
          class="navbar-toggler"
          type="button"
@@ -20,7 +22,19 @@ const brand = typeof appName !== 'undefined' ? appName : 'App'
       >
          <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse justify-content-end" id="appNavCollapse">
+      <div class="collapse navbar-collapse justify-content-between" id="appNavCollapse">
+         <ul class="navbar-nav flex-wrap gap-lg-1">
+            <li class="nav-item">
+               <a class="nav-link <%= navCurrent === 'rent-analysis' ? 'active' : '' %>" href="/rent-analysis" <%= navCurrent === 'rent-analysis' ? 'aria-current="page"' : '' %>>
+                  Rent analysis
+               </a>
+            </li>
+            <li class="nav-item">
+               <a class="nav-link <%= navCurrent === 'cost-of-ownership' ? 'active' : '' %>" href="/cost-of-ownership" <%= navCurrent === 'cost-of-ownership' ? 'aria-current="page"' : '' %>>
+                  Cost
+               </a>
+            </li>
+         </ul>
          <ul class="navbar-nav align-items-lg-center gap-lg-2">
             <li class="nav-item">
                <span class="nav-link disabled text-body"><%= userName %></span>

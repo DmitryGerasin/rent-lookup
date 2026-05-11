@@ -7,5 +7,6 @@ const router = require('express').Router()
 
 router.use('/csrf-token', require('./csrf'))
 router.use('/rental-analysis', require('./rentalAnalysis'))
+router.use('/cost-of-ownership', require('./costOfOwnership'))
 
 module.exports = router

@@ -5,7 +5,7 @@
 jest.mock(`../../config`, () => ({
    DEVELOPMENT: false,
    BYPASS_AUTH_IN_DEV: false,
-   appHomePage: `/dashboard`,
+   appHomePage: `/rent-analysis`,
    POST_LOGIN_REDIRECT_EXEMPTIONS: [
       /^\/api\//,
       /^\/search(?:\/|\?|$)/,
@@ -23,7 +23,7 @@ jest.mock(`../../config`, () => ({
       `/admin`,
       `/corp`,
       `/couple`,
-      `/dashboard`,
+      `/rent-analysis`,
       `/dragon`,
       `/file`,
       `/lawyer`,
@@ -81,23 +81,23 @@ describe(`resolveRedirectToForUnauthenticatedRedirect`, () => {
       ).toBe(`/file/2018-0082`)
    })
 
-   it(`uses dashboard when exempt and there is no prior redirect`, () => {
+   it(`uses app home when exempt and there is no prior redirect`, () => {
       expect(
          resolveRedirectToForUnauthenticatedRedirect(`/users/login`, undefined),
-      ).toBe(`/dashboard`)
+      ).toBe(`/rent-analysis`)
    })
 
-   it(`uses dashboard when exempt and prior redirect is empty`, () => {
+   it(`uses app home when exempt and prior redirect is empty`, () => {
       expect(
          resolveRedirectToForUnauthenticatedRedirect(`/api/foo`, `   `),
-      ).toBe(`/dashboard`)
+      ).toBe(`/rent-analysis`)
    })
 
    it(`ignores prior redirect when the current URL is not exempt`, () => {
       expect(
          resolveRedirectToForUnauthenticatedRedirect(
             `/person/99?returnTo=%2Ffile%2Fx`,
-            `/dashboard`,
+            `/rent-analysis`,
          ),
       ).toBe(`/person/99?returnTo=/file/x`)
    })
@@ -189,6 +189,6 @@ describe(`ensureNotAuthenticated`, () => {
       ensureNotAuthenticated(req, res, mockNext)
 
       expect(mockNext).not.toHaveBeenCalled()
-      expect(mockRedirect).toHaveBeenCalledWith(`/dashboard`)
+      expect(mockRedirect).toHaveBeenCalledWith(`/rent-analysis`)
    })
 })

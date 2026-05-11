@@ -16,16 +16,16 @@
    <script defer src="/js/vendors/jquery.min.js?cache=<%= appVersion %>"></script>
    <script defer src="/js/vendors/bootstrap.bundle.min.js?cache=<%= appVersion %>"></script>
    <script defer src="/js/vendors/chart.umd.min.js?cache=<%= appVersion %>"></script>
-   <script defer src="/js/dashboard.bundle.js?cache=<%= appVersion %>"></script>
+   <script defer src="/js/rentAnalysis.bundle.js?cache=<%= appVersion %>"></script>
 
    <%# CSS %> 
-   <link rel="stylesheet" href="/css/dashboard.min.css?cache=<%= appVersion %>">
+   <link rel="stylesheet" href="/css/rentAnalysis.min.css?cache=<%= appVersion %>">
 
    <title><%= pageTitle %></title>
 </head>
 
 <body class="bg-light">
-   <%- include('../partials/navbarApp.ejs', { appName, firstName, lastName }) %>
+   <%- include('../partials/navbarApp.ejs', { appName, firstName, lastName, current }) %>
 
    <div class="container py-2">
       <%- include('../partials/messages.ejs') %>

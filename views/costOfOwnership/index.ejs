@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+   <%- include('../partials/csrf.ejs') %>
+
+   <link rel="shortcut icon" href="/favicon.ico?cache=<%= appVersion %>" type="image/x-icon">
+
+   <script defer src="/js/vendors/jquery.min.js?cache=<%= appVersion %>"></script>
+   <script defer src="/js/vendors/bootstrap.bundle.min.js?cache=<%= appVersion %>"></script>
+   <script defer src="/js/costOfOwnership.bundle.js?cache=<%= appVersion %>"></script>
+
+   <link rel="stylesheet" href="/css/costOfOwnership.min.css?cache=<%= appVersion %>">
+
+   <title><%= pageTitle %></title>
+</head>
+
+<body class="bg-light">
+   <%- include('../partials/navbarApp.ejs', { appName, firstName, lastName, current }) %>
+
+   <div class="container py-2">
+      <%- include('../partials/messages.ejs') %>
+   </div>
+
+   <main class="container pb-5 px-3 cost-of-ownership-main">
+      <div class="row justify-content-center">
+         <div class="col-12 col-lg-10 col-xl-8">
+            <h1 class="h3 mb-3">Cost of ownership</h1>
+            <p class="text-muted small mb-4">
+               Estimated monthly cash cost: mortgage payment (fixed-rate amortization) plus municipal and school taxes,
+               home insurance, and maintenance. Only purchase price is required; other fields use Quebec-oriented defaults when left blank.
+            </p>
+
+            <form id="cost-of-ownership-form" class="card shadow-sm mb-4">
+               <div class="card-body">
+                  <div class="row g-3">
+                     <div class="col-12 col-md-6 form-floating">
+                        <input type="number" class="form-control" id="purchasePrice" name="purchasePrice" placeholder="." min="1" max="999999999" step="1" required>
+                        <label for="purchasePrice">Purchase price ($)</label>
+                     </div>
+                     <div class="col-12 col-md-6 form-floating">
+                        <input type="number" class="form-control" id="downpaymentPercent" name="downpaymentPercent" placeholder="." min="0" max="100" step="0.1">
+                        <label for="downpaymentPercent">Down payment (% of price, optional)</label>
+                     </div>
+                     <div class="col-12 col-md-6 form-floating">
+                        <input type="number" class="form-control" id="loanPrincipal" name="loanPrincipal" placeholder="." min="0" max="999999999" step="1000">
+                        <label for="loanPrincipal">Loan principal ($, optional)</label>
+                     </div>
+                     <div class="col-12 col-md-6 form-floating">
+                        <input type="number" class="form-control" id="annualInterestRatePercent" name="annualInterestRatePercent" placeholder="." min="0" max="30" step="0.01">
+                        <label for="annualInterestRatePercent">Annual interest rate (%, optional)</label>
+                     </div>
+                     <div class="col-12 col-md-6 form-floating">
+                        <input type="number" class="form-control" id="loanTermYears" name="loanTermYears" placeholder="." min="1" max="40" step="1">
+                        <label for="loanTermYears">Amortization (years, optional)</label>
+                     </div>
+                     <div class="col-12">
+                        <p class="small text-muted mb-0">Annual amounts (optional — estimates from purchase price apply when blank)</p>
+                     </div>
+                     <div class="col-12 col-md-6 form-floating">
+                        <input type="number" class="form-control" id="annualMunicipalTax" name="annualMunicipalTax" placeholder="." min="0" max="500000" step="1">
+                        <label for="annualMunicipalTax">Municipal tax ($/year)</label>
+                     </div>
+                     <div class="col-12 col-md-6 form-floating">
+                        <input type="number" class="form-control" id="annualSchoolTax" name="annualSchoolTax" placeholder="." min="0" max="500000" step="1">
+                        <label for="annualSchoolTax">School tax ($/year)</label>
+                     </div>
+                     <div class="col-12 col-md-6">
+                        <label for="annualInsurance" class="form-label">Insurance ($/year)</label>
+                        <div class="input-group">
+                           <input type="number" class="form-control" id="annualInsurance" name="annualInsurance" min="0" max="500000" step="1" placeholder="0">
+                           <button type="button" class="btn btn-outline-secondary" id="annualInsuranceTimes12" aria-label="Multiply value by 12 (convert monthly premium to annual)">x12</button>
+                        </div>
+                        <div class="form-text">If you know the monthly premium, enter it and press x12 to fill the annual field.</div>
+                     </div>
+                     <div class="col-12 col-md-6 form-floating">
+                        <input type="number" class="form-control" id="annualMaintenance" name="annualMaintenance" placeholder="." min="0" max="500000" step="1">
+                        <label for="annualMaintenance">Maintenance ($/year)</label>
+                     </div>
+                  </div>
+                  <div class="mt-4">
+                     <button type="button" id="costOfOwnershipSubmit" class="btn btn-primary btn-lg w-100 col-12 col-md-4">
+                        Estimate monthly cost
+                     </button>
+                  </div>
+               </div>
+            </form>
+
+            <section id="costResultSection" class="card border-primary d-none">
+               <div class="card-body">
+                  <h2 class="h5 card-title">Estimated monthly cost of ownership</h2>
+                  <p class="display-6 mb-0 text-primary tabular-nums" id="monthlyCostValue" aria-live="polite"></p>
+                  <p class="small text-muted mt-2 mb-0">Includes mortgage, taxes, insurance, and maintenance for the assumptions above.</p>
+               </div>
+            </section>
+         </div>
+      </div>
+   </main>
+</body>
+
+</html>

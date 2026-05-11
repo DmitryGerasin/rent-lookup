@@ -1,5 +1,5 @@
 /**
- * Dashboard — submit address → POST /api/rental-analysis → tables + rent bubble charts.
+ * Rent analysis (`/rent-analysis`) — submit address → POST /api/rental-analysis → tables + rent bubble charts.
  * Analysis thresholds and chart styling come from `config/rentalAnalysis.js` (bundled).
  */
 

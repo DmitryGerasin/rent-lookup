@@ -1,5 +1,5 @@
 /**
- * Rental registry analysis: filtering rules, registry search box size, and dashboard chart styling.
+ * Rental registry analysis: filtering rules, registry search box size, and rent-analysis chart styling.
  *
  * This module uses only plain values and pure helpers (no `process.env`) so it can be
  * required from browserified client bundles as well as Node.
@@ -33,7 +33,7 @@ const REGISTRY_SEARCH_BOX_EDGE_METERS_DEFAULT = 350
 const REGISTRY_SEARCH_BOX_EDGE_METERS_STEP = 10
 
 /**
- * Bedroom counts **greater than or equal to** this value use muted row styling on dashboard rent tables.
+ * Bedroom counts **greater than or equal to** this value use muted row styling on rent-analysis tables.
  */
 const RENT_TABLE_MANY_BEDROOMS_THRESHOLD = 5
 

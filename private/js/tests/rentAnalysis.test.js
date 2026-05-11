@@ -53,7 +53,7 @@ function createOutputTableMock() {
    }
 }
 
-describe(`dashboard.js`, () => {
+describe(`rentAnalysis.js`, () => {
    let $searchBar
    let $outputTable
    let keyupListener
@@ -93,7 +93,7 @@ describe(`dashboard.js`, () => {
       GET = require(`../components/rest`).GET
       displayErrors = require(`../components/errorHandling`).displayErrors
       GET.mockImplementation(() => Promise.resolve({ meta: { timeStamp: Date.now(), searchTerm: `` }, resultArray: [] }))
-      require(`../dashboard`)
+      require(`../rentAnalysis`)
    })
 
    afterEach(() => {

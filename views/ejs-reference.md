@@ -8,7 +8,7 @@ Reference for AI agents and developers. Use this when creating or refactoring EJ
 
 ## Router & Layout
 
-- **`useLayout: false`** — Pass from route to give full control to the EJS page. The page renders its own full HTML document (no layout wrapper). Used for: `/file/:fileId`, `/person/:personId`, `/dashboard`, `/users/login`, `/users/register`, etc.
+- **`useLayout: false`** — Pass from route to give full control to the EJS page. The page renders its own full HTML document (no layout wrapper). Used for: `/file/:fileId`, `/person/:personId`, `/rent-analysis`, `/users/login`, `/users/register`, etc.
 - When `useLayout: false`, the EJS receives `body` as raw HTML and must define its own `<!DOCTYPE html>`, `<head>`, `<body>`, scripts, and styles.
 
 ---
@@ -268,17 +268,21 @@ Search bars follow a consistent pattern with reusable backend JS (`private/js/co
 - Save button: `btn btn-success ms-auto me-3 w-auto`.
 - Datalists: `include('../partials/datalists.ejs')`.
 
-### Dashboard (`/dashboard`)
-- Navbar: `include('../partials/navbar.ejs', {current:'dashboard', ...})`
+### Rent analysis (`/rent-analysis`)
+- Navbar: `include('../partials/navbarApp.ejs', { appName, firstName, lastName, current: 'rent-analysis' })` (or `partials/navbar.ejs` with `current: 'rent-analysis'`).
 - Messages: `include('../partials/messages.ejs')`
-- Container: `.custom-container` (70% width, centered).
-- Search: `form-control`, `autocomplete="off"`, `autofocus`.
+- Intro copy and registry analysis form; charts and tables driven by `rentAnalysis.bundle.js`.
+
+### Cost of ownership (`/cost-of-ownership`)
+- Navbar: same as rent analysis with `current: 'cost-of-ownership'`.
+- Form fields (no `action` / `method`); `costOfOwnership.bundle.js` POSTs to `/api/cost-of-ownership` and displays the monthly total.
 
 ---
 
 ## Partials
 
-- **`partials/navbar.ejs`** — Main app navbar. Requires: `current`, `firstName`, `lastName`, `isAdmin`, `user`.
+- **`partials/navbar.ejs`** — Full SDN-style navbar (tabs + logo + user menu). Requires: `current`, `firstName`, `lastName`, `isAdmin`, `user`. Use `current: 'rent-analysis'` for `/rent-analysis`, `'cost-of-ownership'` for `/cost-of-ownership`.
+- **`partials/navbarApp.ejs`** — Compact navbar for the RealEstate app (Rent analysis, Cost, logout). Requires: `appName`, `firstName`, `lastName`. Optional: `current` (`'rent-analysis'` | `'cost-of-ownership'`) for active link styling.
 - **`partials/messages.ejs`** — Flash/alert messages rendered with Bootstrap dismissible alerts.
 - **`partials/datalists.ejs`** — Country/province datalists (`countries`, `countries-fr`, `countries-en`, `provinces-list-long`). Self-contained (no `JSONparams` or other locals). Include on any page with country/province inputs.
 
@@ -327,7 +331,7 @@ For front-end append helpers, see `private/js/frontend-js-reference.md` ("Messag
 
 ## Mobile Compatibility
 
-When refactoring pages, make them compatible with mobile devices. Users are not expected to use all features on mobile, but they are likely to visit: **login**, **registration**, **dashboard**, **admin**, **time**, and the **file page** (for reading main section, reading notes, creating notes, creating time activity entries). Use responsive Bootstrap classes (`col-md-*`, `col-12`, etc.) and test on small viewports.
+When refactoring pages, make them compatible with mobile devices. Users are not expected to use all features on mobile, but they are likely to visit: **login**, **registration**, **rent analysis**, **admin**, **time**, and the **file page** (for reading main section, reading notes, creating notes, creating time activity entries). Use responsive Bootstrap classes (`col-md-*`, `col-12`, etc.) and test on small viewports.
 
 ---
 

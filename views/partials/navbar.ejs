@@ -1,7 +1,7 @@
 <%#
   Main Navbar Partial
   
-  Includes: dashboard links, logo, user dropdown (profile, time, InvoiceNow, admin, logout)
+  Includes: Rent analysis and Cost links, logo, user dropdown (profile, time, InvoiceNow, admin, logout)
   
   Required: current (string indicating current page, for highlighting)
   Expected: firstName, lastName, user, isAdmin
@@ -15,20 +15,25 @@ const userName = ((typeof firstName !== 'undefined' ? firstName : '') + ' ' + (t
    
       <div>
          <ul class="nav nav-tabs flex-row">
-            <% if(current === 'dashboard') { %>
+            <% if(current === 'rent-analysis') { %>
                <a href="/file/new" class="btn btn-outline-success">
                   Nouveau dossier
                   <%- include(`../icons/add.svg`) %>
                </a>
             <% } else { %>
                <li class="nav-item">
-                  <a class="nav-link <%= current === 'dashboard' ? 'active' : '' %>" href="/dashboard">
-                     Dashboard
+                  <a class="nav-link <%= current === 'rent-analysis' ? 'active' : '' %>" href="/rent-analysis">
+                     Rent analysis
                   </a>
                </li>
             <% } %>
             <li class="nav-item">
-               <a class="nav-link <%= current === 'all' ? 'active' : '' %>" href="/dashboard/all">
+               <a class="nav-link <%= current === 'cost-of-ownership' ? 'active' : '' %>" href="/cost-of-ownership">
+                  Cost
+               </a>
+            </li>
+            <li class="nav-item">
+               <a class="nav-link <%= current === 'all' ? 'active' : '' %>" href="/rent-analysis/all">
                   Aperçu des dossiers
                </a>
             </li>
@@ -54,11 +59,11 @@ const userName = ((typeof firstName !== 'undefined' ? firstName : '') + ' ' + (t
                </a>
                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                   <li>
-                     <a class="dropdown-item <%= current === 'dashboard' ? 'active' : '' %>" href="/dashboard">
+                     <a class="dropdown-item <%= current === 'rent-analysis' ? 'active' : '' %>" href="/rent-analysis">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house me-2" viewBox="0 0 16 16">
                            <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293z"/>
                         </svg>
-                        Dashboard
+                        Rent analysis
                      </a>
                   </li>
                   <li>
@@ -71,7 +76,7 @@ const userName = ((typeof firstName !== 'undefined' ? firstName : '') + ' ' + (t
                      </a>
                   </li>
                   <li>
-                     <a class="dropdown-item <%= current === 'rtbc' ? 'active' : '' %>" href="/dashboard/rtbc">
+                     <a class="dropdown-item <%= current === 'rtbc' ? 'active' : '' %>" href="/rent-analysis/rtbc">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-square me-2" viewBox="0 0 16 16">
                            <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z"/>
                            <path d="m8.354 10.354 7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z"/>

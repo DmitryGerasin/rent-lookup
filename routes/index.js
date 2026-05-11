@@ -19,7 +19,8 @@ router.get(`/`, (req, res) => {
 })
 
 router.use(`/api`,       auth.ensureAuthenticated,                   require(`./api`))             // JSON API — `routes/api/index.js`
-router.use(`/dashboard`, auth.ensureAuthenticated,                   require(`./dashboard`))       // 
+router.use(`/rent-analysis`, auth.ensureAuthenticated,             require(`./rentAnalysis`))   // Quebec rental registry analysis
+router.use(`/cost-of-ownership`, auth.ensureAuthenticated,           require(`./costOfOwnership`)) // Monthly carrying-cost estimate
 router.use(`/users`,                                                 require(`./users`))           // Registration & Authentication
 
 router.use(              auth.ensureAuthenticated,                   (req, res) => errorCodes(res, 404))   // should be last, if no above route corresponds to request
