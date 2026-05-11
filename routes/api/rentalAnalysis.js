@@ -3,7 +3,7 @@
  */
 
 const errHandling = require('../errorHandling')
-const { clampRegistryBboxScale } = require('../../config/rentalAnalysis')
+const { clampRegistrySearchBoxEdgeMeters } = require('../../config/rentalAnalysis')
 const { getAddressCoordinates } = require('../../models/geoCode')
 const { getHousings } = require('../../models/rentalRegistry')
 const { processData } = require('../../models/processData')
@@ -32,12 +32,12 @@ async function postRentalAnalysis(req, res) {
          }
       }
 
-      const scale = clampRegistryBboxScale(req.body?.scale)
+      const boxEdgeMeters = clampRegistrySearchBoxEdgeMeters(req.body?.boxEdgeMeters)
 
       const geocode = await getAddressCoordinates(street, city, postalCode)
       const registry = await getHousings(
          { lat: geocode.lat, lng: geocode.lng },
-         scale,
+         boxEdgeMeters,
       )
       if (registry?.status && registry.status !== 'success') {
          throw {

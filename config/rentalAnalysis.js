@@ -1,5 +1,5 @@
 /**
- * Rental registry analysis: filtering rules, registry bbox scale, and dashboard chart styling.
+ * Rental registry analysis: filtering rules, registry search box size, and dashboard chart styling.
  *
  * This module uses only plain values and pure helpers (no `process.env`) so it can be
  * required from browserified client bundles as well as Node.
@@ -20,22 +20,17 @@ const RENT_ANALYSIS_YEAR_RANGE_YEARS_BEFORE_REFERENCE = 4
  */
 const RENT_ANALYSIS_YEAR_RANGE_YEARS_AFTER_REFERENCE = 0
 
-/** Minimum bbox scale sent to the registry API (see `getHousings`). */
-const REGISTRY_BBOX_SCALE_MIN = 0.01
+/** Minimum edge length (meters) of the square bbox sent to the registry API (see `getHousings`). */
+const REGISTRY_SEARCH_BOX_EDGE_METERS_MIN = 50
 
-/** Maximum bbox scale sent to the registry API. */
-const REGISTRY_BBOX_SCALE_MAX = 5
+/** Maximum edge length (meters) of the square bbox sent to the registry API. */
+const REGISTRY_SEARCH_BOX_EDGE_METERS_MAX = 2000
 
-/** Default bbox scale when the client omits or sends an invalid value. */
-const REGISTRY_BBOX_SCALE_DEFAULT = 1
+/** Default square edge length when the client omits or sends an invalid value. */
+const REGISTRY_SEARCH_BOX_EDGE_METERS_DEFAULT = 350
 
-/** `<input type="number" step>` for the scale control (should match rounding decimals). */
-const REGISTRY_BBOX_SCALE_STEP = 0.01
-
-/**
- * Decimal places used when rounding scale from JSON bodies (must align with `REGISTRY_BBOX_SCALE_STEP`).
- */
-const REGISTRY_BBOX_SCALE_ROUND_DECIMALS = 2
+/** Slider / POST body step for search box edge length (meters). */
+const REGISTRY_SEARCH_BOX_EDGE_METERS_STEP = 10
 
 /**
  * Bedroom counts **greater than or equal to** this value use muted row styling on dashboard rent tables.
@@ -127,21 +122,22 @@ function getRentAnalysisYearWindow(referenceCalendarYear = new Date().getFullYea
 }
 
 /**
- * Clamp and round bbox scale from client input to registry-safe bounds.
+ * Clamp and quantize square bbox edge length from client input (meters).
  *
- * @param {unknown} rawValue From `req.body.scale` or equivalent.
+ * @param {unknown} rawValue From `req.body.boxEdgeMeters` or equivalent.
  * @returns {number}
  */
-function clampRegistryBboxScale(rawValue) {
-   let scale = Number(rawValue)
-   if (!Number.isFinite(scale)) {
-      scale = REGISTRY_BBOX_SCALE_DEFAULT
+function clampRegistrySearchBoxEdgeMeters(rawValue) {
+   let meters = Number(rawValue)
+   if (!Number.isFinite(meters)) {
+      meters = REGISTRY_SEARCH_BOX_EDGE_METERS_DEFAULT
    }
-   const factor = 10 ** REGISTRY_BBOX_SCALE_ROUND_DECIMALS
-   scale = Math.round(scale * factor) / factor
+   meters =
+      Math.round(meters / REGISTRY_SEARCH_BOX_EDGE_METERS_STEP) *
+      REGISTRY_SEARCH_BOX_EDGE_METERS_STEP
    return Math.min(
-      REGISTRY_BBOX_SCALE_MAX,
-      Math.max(REGISTRY_BBOX_SCALE_MIN, scale),
+      REGISTRY_SEARCH_BOX_EDGE_METERS_MAX,
+      Math.max(REGISTRY_SEARCH_BOX_EDGE_METERS_MIN, meters),
    )
 }
 
@@ -208,11 +204,10 @@ module.exports = {
    RENT_ANALYSIS_MAX_RENT_MONTHLY,
    RENT_ANALYSIS_YEAR_RANGE_YEARS_BEFORE_REFERENCE,
    RENT_ANALYSIS_YEAR_RANGE_YEARS_AFTER_REFERENCE,
-   REGISTRY_BBOX_SCALE_MIN,
-   REGISTRY_BBOX_SCALE_MAX,
-   REGISTRY_BBOX_SCALE_DEFAULT,
-   REGISTRY_BBOX_SCALE_STEP,
-   REGISTRY_BBOX_SCALE_ROUND_DECIMALS,
+   REGISTRY_SEARCH_BOX_EDGE_METERS_MIN,
+   REGISTRY_SEARCH_BOX_EDGE_METERS_MAX,
+   REGISTRY_SEARCH_BOX_EDGE_METERS_DEFAULT,
+   REGISTRY_SEARCH_BOX_EDGE_METERS_STEP,
    RENT_TABLE_MANY_BEDROOMS_THRESHOLD,
    RENT_CHART_DOLLAR_BUCKET_SIZE,
    CHART_BUBBLE_RADIUS_MIN_PX,
@@ -229,7 +224,7 @@ module.exports = {
    SCATTER_ROOM_COLOR_7_PLUS,
    SCATTER_ROOM_LABELS,
    getRentAnalysisYearWindow,
-   clampRegistryBboxScale,
+   clampRegistrySearchBoxEdgeMeters,
    chartBedroomBucketIndex,
    chartBedroomStackXOffset,
    rentChartDollarBucketFloor,

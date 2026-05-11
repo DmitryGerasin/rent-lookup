@@ -56,9 +56,12 @@
                         <input type="text" class="form-control" id="postalCode" name="postalCode" autocomplete="postal-code">
                      </div>
                      <div class="col-12 col-md-6">
-                        <label for="scale" class="form-label">Area scale</label>
-                        <input type="number" class="form-control" id="scale" name="scale" min="<%= registryBboxScaleMin %>" max="<%= registryBboxScaleMax %>" step="<%= registryBboxScaleStep %>" value="<%= registryBboxScaleDefault %>" required>
-                        <div class="form-text"><%= registryBboxScaleMin %>–<%= registryBboxScaleMax %> — size of the bounding box around the geocoded point sent to the registry.</div>
+                        <label for="registrySearchBoxEdge" class="form-label d-flex justify-content-between align-items-baseline gap-2">
+                           <span>Square search area</span>
+                           <span id="registrySearchBoxEdgeValue" class="small fw-medium text-body-secondary tabular-nums" aria-live="polite"></span>
+                        </label>
+                        <input type="range" class="form-range" id="registrySearchBoxEdge" name="boxEdgeMeters" min="<%= registrySearchBoxEdgeMin %>" max="<%= registrySearchBoxEdgeMax %>" step="<%= registrySearchBoxEdgeStep %>" value="<%= registrySearchBoxEdgeDefault %>">
+                        <div class="form-text">Edge length <%= registrySearchBoxEdgeMin %>m - <%= registrySearchBoxEdgeMax %>m (each side of the square around the geocoded point).</div>
                      </div>
                   </div>
                   <div class="mt-4">

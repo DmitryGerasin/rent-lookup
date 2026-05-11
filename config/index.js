@@ -90,7 +90,7 @@ const SAFE_RETURN_PATH_PREFIXES = [
    `/dashboard`,
 ]
 
-/** Rental analysis filters, registry bbox scale, and dashboard chart constants (browser-safe). */
+/** Rental analysis filters, registry search box bounds, and dashboard chart constants (browser-safe). */
 const rentalAnalysis = require(`./rentalAnalysis`)
 
 /**

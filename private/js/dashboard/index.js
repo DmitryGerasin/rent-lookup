@@ -20,7 +20,16 @@ const $submit = $(`#analyzeSubmit`)
 const $street = $(`#street`)
 const $city = $(`#city`)
 const $postalCode = $(`#postalCode`)
-const $scale = $(`#scale`)
+const $registrySearchBoxEdge = $(`#registrySearchBoxEdge`)
+const $registrySearchBoxEdgeValue = $(`#registrySearchBoxEdgeValue`)
+
+function updateRegistrySearchBoxEdgeLabel() {
+   const v = Number.parseInt(String($registrySearchBoxEdge.val()), 10)
+   $registrySearchBoxEdgeValue.text(Number.isFinite(v) ? `${v} m` : ``)
+}
+
+$registrySearchBoxEdge.on(`input`, updateRegistrySearchBoxEdgeLabel)
+updateRegistrySearchBoxEdgeLabel()
 const $results = $(`#resultsSection`)
 const $geocodeLine = $(`#geocodeLine`)
 const $warningsBox = $(`#warningsBox`)
@@ -492,7 +501,9 @@ $submit.on(`click`, async () => {
       street: $street.val().trim(),
       city: $city.val().trim(),
       postalCode: $postalCode.val().trim(),
-      scale: rentalAnalysis.clampRegistryBboxScale($scale.val()),
+      boxEdgeMeters: rentalAnalysis.clampRegistrySearchBoxEdgeMeters(
+         $registrySearchBoxEdge.val(),
+      ),
    }
 
    setButtonLoadingState($submit, `Analyzing…`)

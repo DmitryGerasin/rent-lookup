@@ -25,10 +25,10 @@ async function getDashboard(req, res) {
          lastName: user?.lastName ?? ``,
          isAdmin: user?.category === `admin`,
          user: user ?? null,
-         registryBboxScaleMin: rentalAnalysis.REGISTRY_BBOX_SCALE_MIN,
-         registryBboxScaleMax: rentalAnalysis.REGISTRY_BBOX_SCALE_MAX,
-         registryBboxScaleStep: rentalAnalysis.REGISTRY_BBOX_SCALE_STEP,
-         registryBboxScaleDefault: rentalAnalysis.REGISTRY_BBOX_SCALE_DEFAULT,
+         registrySearchBoxEdgeMin: rentalAnalysis.REGISTRY_SEARCH_BOX_EDGE_METERS_MIN,
+         registrySearchBoxEdgeMax: rentalAnalysis.REGISTRY_SEARCH_BOX_EDGE_METERS_MAX,
+         registrySearchBoxEdgeStep: rentalAnalysis.REGISTRY_SEARCH_BOX_EDGE_METERS_STEP,
+         registrySearchBoxEdgeDefault: rentalAnalysis.REGISTRY_SEARCH_BOX_EDGE_METERS_DEFAULT,
          rentalAnalysis,
       })
    } catch (err) {

@@ -35,6 +35,7 @@
     "express-rate-limit": "^8.5.1",
     "express-session": "^1.19.0",
     "geocodio-library-node": "^1.15.0",
+    "geolocation-utils": "^1.2.6",
     "helmet": "^8.1.0",
     "jquery": "^4.0.0",
     "luxon": "^3.7.2",
