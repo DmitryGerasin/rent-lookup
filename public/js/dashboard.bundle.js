@@ -7,7 +7,7 @@
  */
 
 /** Drop listings above this monthly rent when building tables and charts (outliers / bad data). */
-const RENT_ANALYSIS_MAX_RENT_MONTHLY = 3500
+const RENT_ANALYSIS_MAX_RENT_MONTHLY = 4250
 
 /**
  * How many calendar years **before** the reference year are included in the window (inclusive).
