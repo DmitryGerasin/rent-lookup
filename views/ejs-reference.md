@@ -31,14 +31,14 @@ Reference for AI agents and developers. Use this when creating or refactoring EJ
 ### Scripts
 - Scripts go in `<head>` with `defer` (async only when required, e.g. recaptcha API).
 - **Standard imports per page:** exactly 2 scripts:
-  1. `/js/vendors/jquery.min.js?cache=<%= process.env.CACHE_BUSTER %>`
-  2. `/js/this-page.bundle.js?cache=<%= process.env.CACHE_BUSTER %>`
+  1. `/js/vendors/jquery.min.js?cache=<%= appVersion %>`
+  2. `/js/this-page.bundle.js?cache=<%= appVersion %>`
 - Exceptions: recaptcha (`async`), Quill, Bootstrap bundle (sometimes in body for modals/dropdowns).
-- Bootstrap: `<script src="/js/vendors/bootstrap.bundle.min.js?cache=<%= process.env.CACHE_BUSTER %>"></script>` — typically at end of `<body>` for modals/dropdowns.
+- Bootstrap: `<script src="/js/vendors/bootstrap.bundle.min.js?cache=<%= appVersion %>"></script>` — typically at end of `<body>` for modals/dropdowns.
 
 ### CSS
 - **Single CSS import per page:**  
-  `<link rel="stylesheet" href="/css/this-page.min.css?cache=<%= process.env.CACHE_BUSTER %>">`
+  `<link rel="stylesheet" href="/css/this-page.min.css?cache=<%= appVersion %>">`
 - Vendor CSS from npm (e.g. Quill Snow, jQuery UI) is pulled in via one-line `@use` wrappers under `private/scss/vendors/` and compiled into the page `.min.css`.
 
 ### Table navigation — `td.fill-with-link`

@@ -2,6 +2,9 @@ const {
    requireEnv,
    requireNonEmptyEnv,
 }                       = require(`../utils/validateEnv`)
+const {
+   version: APP_VERSION,
+}                       = require(`../package.json`)
 
 // Environment
 const PRODUCTION = requireEnv('NODE_ENV') === 'production'
@@ -106,6 +109,7 @@ const POST_LOGIN_REDIRECT_EXEMPTIONS = [
 ]
 
 module.exports = {
+   APP_VERSION,
    PRODUCTION,
    DEVELOPMENT,
    HOSTNAME,

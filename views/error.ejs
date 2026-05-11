@@ -10,14 +10,14 @@
    <%- include('./partials/csrf.ejs') %>
 
    <%# Icon %> 
-   <link rel="shortcut icon" href="/favicon.ico?cache=<%= process.env.CACHE_BUSTER %>" type="image/x-icon">
+   <link rel="shortcut icon" href="/favicon.ico?cache=<%= appVersion %>" type="image/x-icon">
    
    <%# JS %> 
    <script defer src="/js/vendors/jquery.min.js"></script>
    <script defer src="/js/error.bundle.js"></script>
 
    <%# CSS %> 
-   <link rel="stylesheet" href="/css/error.min.css?cache=<%= process.env.CACHE_BUSTER %>">
+   <link rel="stylesheet" href="/css/error.min.css?cache=<%= appVersion %>">
 
    <title><%= pageTitle %></title>
 </head>

@@ -10,16 +10,16 @@
    <%- include('../partials/csrf.ejs') %>
 
    <%# Icon %>
-   <link rel="shortcut icon" href="/favicon.ico?cache=<%= process.env.CACHE_BUSTER %>" type="image/x-icon">
+   <link rel="shortcut icon" href="/favicon.ico?cache=<%= appVersion %>" type="image/x-icon">
 
    <%# JS %>
    <script async src="https://www.google.com/recaptcha/api.js"></script>
-   <script defer src="/js/vendors/jquery.min.js?cache=<%= process.env.CACHE_BUSTER %>"></script>
-   <script defer src="/js/login.bundle.js?cache=<%= process.env.CACHE_BUSTER %>"></script>
-   <script defer src="/js/vendors/bootstrap.bundle.min.js?cache=<%= process.env.CACHE_BUSTER %>"></script>
+   <script defer src="/js/vendors/jquery.min.js?cache=<%= appVersion %>"></script>
+   <script defer src="/js/login.bundle.js?cache=<%= appVersion %>"></script>
+   <script defer src="/js/vendors/bootstrap.bundle.min.js?cache=<%= appVersion %>"></script>
 
    <%# CSS %>
-   <link rel="stylesheet" href="/css/users.min.css?cache=<%= process.env.CACHE_BUSTER %>">
+   <link rel="stylesheet" href="/css/users.min.css?cache=<%= appVersion %>">
 
    <title><%= pageTitle %></title>
 </head>

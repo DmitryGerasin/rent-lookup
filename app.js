@@ -1,5 +1,6 @@
 require('dotenv').config({ quiet: true })
 const {
+   APP_VERSION,
    PRODUCTION,
    USE_LOG_REQUEST_IN_DEVELOPMENT,
    EXPRESS_SESSION_SECRET,
@@ -12,7 +13,8 @@ const {
 }                       = require(`./config`)
 const express           = require(`express`)
 const cookieParser      = require(`cookie-parser`)
-   const app            = express()
+const app               = express()
+app.locals.appVersion = APP_VERSION
 const flash             = require('connect-flash')
 const http              = require(`http`)
 const passport          = require(`passport`)
